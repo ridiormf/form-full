@@ -1,29 +1,34 @@
-import { HandleFormButtons } from "./classes/HandleFormButtons";
-import { HandleFormFields } from "./classes/HandleFormFields";
-import { FormButtonHandlerContructor } from "./types/FormButtonHandler";
+import { HandleButtonsList } from "./buttonController/HandleButtonsList";
+import { HandleFieldsList } from "./fieldController/HandleFieldsList";
+import { ButtonHandlerParams } from "./buttonController/types/ButtonHandler";
 import {
+  AsyncValidationType,
   ErrorMessageType,
+  FieldActionType,
   FieldRef,
   FieldValueType,
-  FormFieldHandlerContructor,
+  FieldHandlerParams,
   MaskToSubmitType,
   MaskType,
   ValidationType,
-} from "./types/FormFieldHandler";
-import { DataReturnType, FormHandlerConstructor } from "./types/FormHandler";
-import { ActualValues } from "./types/HandleFormFields";
+} from "./fieldController/types/FieldHandler";
+import {
+  FFDataReturnType,
+  FormFullHandlerParams,
+} from "./types/FormFullHandler";
+import { ActualValuesType } from "./fieldController/types/HandleFieldsList";
 
-export default class FormHandler {
-  onSubmit; // TODO/HINT expect a function
-  clearOnSubmit = false; // TODO/HINT expect a boolean
-  submitOnClear = false; // TODO/HINT expect a boolean
-  onChange; // TODO/HINT onChange callback when any value on form changes
+export default class FormFullHandler {
+  onSubmit;
+  clearOnSubmit = false;
+  submitOnClear = false;
+  onChange;
   disabled = false;
 
   errorsMessages: Array<string> = [];
 
-  formButtonsHandler: HandleFormButtons;
-  formFieldsHandler: HandleFormFields;
+  formButtonsHandler: HandleButtonsList;
+  formFieldsHandler: HandleFieldsList;
 
   constructor({
     onSubmit,
@@ -31,27 +36,16 @@ export default class FormHandler {
     submitOnClear,
     onChange,
     disabled,
-  }: FormHandlerConstructor) {
+  }: FormFullHandlerParams) {
     this.onSubmit = onSubmit;
     this.clearOnSubmit = clearOnSubmit ?? false;
     this.submitOnClear = submitOnClear ?? false;
     this.onChange = onChange ?? undefined;
     this.disabled = disabled ?? false;
 
-    this.formButtonsHandler = new HandleFormButtons();
-    this.formFieldsHandler = new HandleFormFields();
+    this.formButtonsHandler = new HandleButtonsList();
+    this.formFieldsHandler = new HandleFieldsList();
   }
-
-  static webFileReader = (
-    value: File,
-    callback: (result: string | ArrayBuffer | null) => any
-  ) => {
-    let reader = new FileReader();
-    reader.readAsDataURL(value);
-    reader.onloadend = () => {
-      callback(reader.result);
-    };
-  };
 
   static handleError = {
     fieldNotFound: (name: string): void => {
@@ -60,10 +54,7 @@ export default class FormHandler {
     },
   };
 
-  setNewField = (
-    name: string,
-    fieldParams: FormFieldHandlerContructor
-  ): void => {
+  setNewField = (name: string, fieldParams: FieldHandlerParams): void => {
     this.formFieldsHandler.setNewField(name, fieldParams);
   };
 
@@ -71,14 +62,14 @@ export default class FormHandler {
     this.formFieldsHandler.removeField(name);
   };
 
-  setNewButton = (name: string, buttonParams: FormButtonHandlerContructor) => {
+  setNewButton = (name: string, buttonParams: ButtonHandlerParams) => {
     this.formButtonsHandler.setNewButton(name, buttonParams);
   };
   removeButton = (name: string): void => {
     this.formButtonsHandler.removeButton(name);
   };
 
-  setActualValues = (actualValues: ActualValues): void => {
+  setActualValues = (actualValues: ActualValuesType): void => {
     this.formFieldsHandler.setActualValues(actualValues);
   };
 
@@ -104,14 +95,12 @@ export default class FormHandler {
   setFieldLabel = (name: string, label: string): void => {
     this.formFieldsHandler.setFieldLabel(name, label);
   };
-  setFieldType = (name: string, type: any) => {
-    // TODO field type enum
-    this.formFieldsHandler.setFieldType(name, type);
+  setFieldActionType = (name: string, actionType: FieldActionType) => {
+    this.formFieldsHandler.setFieldActionType(name, actionType);
   };
   setFieldIsFileValue = (name: string, isFileValue: boolean): void => {
     this.formFieldsHandler.setFieldIsFileValue(name, isFileValue);
   };
-
   setFieldMask = (name: string, mask: MaskType): void => {
     this.formFieldsHandler.setFieldMask(name, mask);
   };
@@ -125,6 +114,13 @@ export default class FormHandler {
     this.formFieldsHandler.setFieldValidation(name, validation);
   };
 
+  setFieldAsyncValidation = (
+    name: string,
+    asyncValidation: AsyncValidationType
+  ): void => {
+    this.formFieldsHandler.setFieldAsyncValidation(name, asyncValidation);
+  };
+
   getFieldRef = (name: string): FieldRef => {
     return this.formFieldsHandler.getFieldRef(name);
   };
@@ -135,6 +131,9 @@ export default class FormHandler {
 
   setFormValue = (name: string, value: FieldValueType): void => {
     this.formFieldsHandler.setFormValue(name, value);
+    if (this.onChange) {
+      this.onChange();
+    }
   };
 
   clearValue = (name: string): void => {
@@ -153,7 +152,7 @@ export default class FormHandler {
     return this.formFieldsHandler.getActualValue(name);
   };
 
-  getValues = (): DataReturnType => {
+  getValues = (): FFDataReturnType => {
     return this.formFieldsHandler.getValues(this);
   };
 
@@ -167,7 +166,7 @@ export default class FormHandler {
 
   testErrorsAndReturnData = async (): Promise<{
     hasError: boolean;
-    data: DataReturnType;
+    data: FFDataReturnType;
   }> => {
     return this.formFieldsHandler.testErrorsAndReturnData(
       this,

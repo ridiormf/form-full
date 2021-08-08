@@ -1,27 +1,16 @@
 import React from "react";
 import { useConstructor } from "../hooks/useConstructor";
-import { ActualValues } from "../types/HandleFormFields";
-import FormHandler from "../FormHandler";
+import FormFullHandler from "../classes/FormFullHandler";
+import { FormFullProps } from "../classes/types/FormFull";
 
-export const FormContext = React.createContext<FormHandler | undefined>(
+export const FormContext = React.createContext<FormFullHandler | undefined>(
   undefined
 );
 
-type Props = {
-  onSubmit: Function;
-  clearOnSubmit?: boolean;
-  submitOnClear?: boolean;
-  onChange?: Function;
-  formRef?: Function;
-  children: React.ReactNode;
-  actualValues?: ActualValues;
-  disabled?: boolean;
-};
-
-function FormHolder(props: Props): JSX.Element {
-  const formHandler = React.useRef<FormHandler>();
+function FormFull(props: FormFullProps): JSX.Element {
+  const formHandler = React.useRef<FormFullHandler>();
   useConstructor(() => {
-    formHandler.current = new FormHandler({
+    formHandler.current = new FormFullHandler({
       onSubmit: props.onSubmit,
       clearOnSubmit: props.clearOnSubmit,
       submitOnClear: props.submitOnClear,
@@ -56,4 +45,4 @@ function FormHolder(props: Props): JSX.Element {
   );
 }
 
-export default FormHolder;
+export default FormFull;

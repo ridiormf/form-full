@@ -1,16 +1,30 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
-import { FormContext } from "./components/FormHolder";
+import { FormContext } from "./components/FormFull";
+import FormFullHandler from "./classes/FormFullHandler";
+import { FieldProps } from "./classes/fieldController/types/Field";
 import {
   ErrorMessageType,
   FieldRef,
   FieldValueType,
-} from "./types/FormFieldHandler";
+  FieldHandlerParams,
+} from "./classes/fieldController/types/FieldHandler";
 
-export default function useFormField(props: any) {
+export default function useField(props: FieldProps & FieldHandlerParams): {
+  value: FieldValueType;
+  error: ErrorMessageType;
+  valid: boolean;
+  validationLoading: boolean;
+  formDisabled: boolean;
+  onSubmit: (event: any) => void;
+  onBlur: (event: any) => void;
+  setConfigs: (event: any | undefined | null, value: FieldValueType) => void;
+  ref: FieldRef;
+  formHandler: FormFullHandler | undefined;
+} {
   const getInitialStringValue = React.useCallback((): FieldValueType => {
-    const { defaultValue = "", actualValue, mask } = props;
-    const value = actualValue || actualValue === 0 ? actualValue : defaultValue;
+    const { defaultValue = "", mask } = props;
+    const value = defaultValue;
     const finalValue = mask ? mask(value) : value;
     return finalValue;
   }, [props]);
@@ -18,7 +32,6 @@ export default function useFormField(props: any) {
   const initialValue = getInitialStringValue();
 
   const [value, setStateValue] = React.useState(initialValue);
-  const [actualValue, setActualValue] = React.useState(initialValue);
   const [validationLoading, setValidationLoading] = React.useState(false);
   const [error, setError] = React.useState<ErrorMessageType>("");
   const [valid, setValid] = React.useState(false);
@@ -27,7 +40,6 @@ export default function useFormField(props: any) {
   const [formDisabled, setFormDisabled] = React.useState<boolean>(
     !!formHandler?.getDisabledForm()
   );
-  const fileInputRef = React.useRef(null);
 
   const setValueWithoutOnChangeString = React.useCallback(
     (value = "") => {
@@ -37,7 +49,7 @@ export default function useFormField(props: any) {
         maxLengthValue = String(value).substring(0, maxLength);
       }
       const resultedValue = mask ? mask(maxLengthValue) : maxLengthValue;
-      formHandler?.setFormValue(name, maxLengthValue);
+      formHandler?.setFormValue(name, resultedValue);
       setStateValue(resultedValue);
       setValid(false);
     },
@@ -45,14 +57,11 @@ export default function useFormField(props: any) {
   );
 
   const setConfigs = React.useCallback(
-    (event?: any, value: FieldValueType = "") => {
+    (event: any | undefined | null, value: FieldValueType = "") => {
       setValueWithoutOnChangeString(value);
 
       if (props.onChange) {
         props.onChange(event, value, formHandler);
-      }
-      if (props.submitOnChange) {
-        formHandler?.submit();
       }
     },
     [formHandler, props, setValueWithoutOnChangeString]
@@ -66,13 +75,14 @@ export default function useFormField(props: any) {
       handleValue: (value) => setConfigs(null, value),
       setLoading: setValidationLoading,
       value,
-      type: props.type,
+      actionType: props.actionType,
       isFileValue: props.isFileValue,
       label: props.label ?? props.placeholder,
       defaultValue: props.defaultValue,
       mask: props.mask,
       maskToSubmit: props.maskToSubmit,
       validation: props.validation,
+      asyncValidation: props.asyncValidation,
       required: props.required,
       disableHandler: setFormDisabled,
     });
@@ -84,46 +94,18 @@ export default function useFormField(props: any) {
   React.useEffect(mount, []);
 
   React.useEffect(() => {
-    setActualValue(getInitialStringValue());
-    if (props.actualValue !== undefined && actualValue !== props.actualValue) {
-      setValueWithoutOnChangeString(props.actualValue);
-    }
-  }, [
-    props,
-    actualValue,
-    formHandler,
-    setStateValue,
-    setValid,
-    setActualValue,
-    getInitialStringValue,
-    setValueWithoutOnChangeString,
-  ]);
-
-  React.useEffect(() => {
     formHandler?.setFieldRequired(props.name, props.required);
   }, [props, formHandler]);
 
-  function onSubmit(event: any) {
+  function onSubmit(event: any): void {
     if (!event?.shiftKey && event?.charCode === 13) {
       formHandler?.submit();
     }
   }
 
-  function updateInputOnBlur() {
-    const { actualValue } = props;
-    if (actualValue !== value) {
-      setActualValue(value);
-      if (props.submitOnBlur) {
-        formHandler?.submit();
-      }
-    }
-  }
-
-  function onBlur(event: any) {
+  function onBlur(event: any): void {
     setTimeout(() => {
-      if (props.callBlurIfChange) {
-        updateInputOnBlur();
-      } else if (props.submitOnBlur) {
+      if (props.submitOnBlur) {
         formHandler?.submit();
       }
       if (props.onBlur) {
@@ -144,6 +126,5 @@ export default function useFormField(props: any) {
     setConfigs,
     ref,
     formHandler,
-    fileInputRef,
   };
 }

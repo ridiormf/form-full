@@ -1,14 +1,22 @@
 import React from "react";
-import FormHandler from "../FormHandler";
+import FormFullHandler from "../../FormFullHandler";
+
+export type FieldActionType = "file" | undefined;
 
 export type FieldValueType = any;
-export type ErrorMessageType = string | null | void;
+export type ErrorMessageType = string | null | undefined;
 export type MaskType = ((value: FieldValueType) => any) | undefined;
 export type MaskToSubmitType =
-  | ((value: FieldValueType, formHandler?: FormHandler) => any)
+  | ((value: FieldValueType, formHandler?: FormFullHandler) => any)
   | undefined;
 export type ValidationType =
-  | ((value: FieldValueType, formHandler?: FormHandler) => ErrorMessageType)
+  | ((value: FieldValueType, formHandler?: FormFullHandler) => ErrorMessageType)
+  | undefined;
+export type AsyncValidationType =
+  | ((
+      value: FieldValueType,
+      formHandler?: FormFullHandler
+    ) => Promise<ErrorMessageType>)
   | undefined;
 export type FieldRef = any;
 
@@ -22,7 +30,7 @@ export type HandleValueType = React.Dispatch<
 export type SetLoadingType = React.Dispatch<React.SetStateAction<boolean>>;
 export type DisableHandlerType = React.Dispatch<React.SetStateAction<boolean>>;
 
-export type FormFieldHandlerContructor = {
+export type FieldHandlerParams = {
   value?: FieldValueType;
   defaultValue?: FieldValueType;
   valueFile?: File;
@@ -30,12 +38,13 @@ export type FormFieldHandlerContructor = {
   label?: string;
   required?: ErrorMessageType;
 
-  type?: any; //TODO field type enum
+  actionType?: FieldActionType;
   isFileValue?: boolean;
 
   mask: MaskType;
   maskToSubmit: MaskToSubmitType;
   validation: ValidationType;
+  asyncValidation: AsyncValidationType;
 
   errorHandler: ErrorHandlerType;
   validHandler: ValidHandlerType;

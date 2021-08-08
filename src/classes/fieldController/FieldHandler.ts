@@ -1,21 +1,23 @@
 import {
+  AsyncValidationType,
   DisableHandlerType,
   ErrorHandlerType,
   ErrorMessageType,
+  FieldActionType,
   FieldRef,
   FieldValueType,
-  FormFieldHandlerContructor,
+  FieldHandlerParams,
   HandleValueType,
   MaskToSubmitType,
   MaskType,
   SetLoadingType,
   ValidationType,
   ValidHandlerType,
-} from "../types/FormFieldHandler";
+} from "./types/FieldHandler";
 
-import FormHandler from "../FormHandler";
+import FormFullHandler from "../FormFullHandler";
 
-class FormFieldHandler {
+class FieldHandler {
   value: FieldValueType;
   defaultValue: FieldValueType;
   valueFile?: File;
@@ -23,12 +25,13 @@ class FormFieldHandler {
   label?: string;
   required: ErrorMessageType;
 
-  type: any;
+  actionType: any;
   isFileValue?: boolean;
 
   mask: MaskType;
   maskToSubmit: MaskToSubmitType;
   validation: ValidationType;
+  asyncValidation: AsyncValidationType;
 
   errorHandler: ErrorHandlerType;
   validHandler: ValidHandlerType;
@@ -38,34 +41,36 @@ class FormFieldHandler {
 
   ref: FieldRef;
 
-  error: boolean = false; // controle interno para acessar valores sem erro
+  error: boolean = false;
 
   constructor({
     value,
     defaultValue,
     label,
     required,
-    type,
+    actionType,
     isFileValue,
     mask,
     maskToSubmit,
     validation,
+    asyncValidation,
     errorHandler,
     validHandler,
     handleValue,
     setLoading,
     disableHandler,
     ref,
-  }: FormFieldHandlerContructor) {
+  }: FieldHandlerParams) {
     this.value = value;
     this.defaultValue = defaultValue;
     this.label = label;
     this.required = required;
-    this.type = type;
+    this.actionType = actionType;
     this.isFileValue = isFileValue;
     this.mask = mask;
     this.maskToSubmit = maskToSubmit;
     this.validation = validation;
+    this.asyncValidation = asyncValidation;
     this.errorHandler = errorHandler;
     this.validHandler = validHandler;
     this.handleValue = handleValue;
@@ -90,9 +95,8 @@ class FormFieldHandler {
     this.label = label;
   };
 
-  setType = (type: any): void => {
-    // TODO type enum
-    this.type = type;
+  setType = (actionType: FieldActionType): void => {
+    this.actionType = actionType;
   };
 
   setIsFileValue = (isFileValue: boolean): void => {
@@ -111,8 +115,12 @@ class FormFieldHandler {
     this.validation = validation;
   };
 
+  setAsyncValidation = (asyncValidation: AsyncValidationType): void => {
+    this.asyncValidation = asyncValidation;
+  };
+
   setValue = (newValue: FieldValueType): void => {
-    if (this.type === "file" && newValue) {
+    if (this.actionType === "file" && newValue) {
       this.value = newValue.base64;
       delete newValue.base64;
       this.valueFile = newValue;
@@ -133,7 +141,7 @@ class FormFieldHandler {
     this.handleValue(this.defaultValue);
   };
 
-  getFormatedValueToSubmit = (formHandler: FormHandler): any => {
+  getFormatedValueToSubmit = (formHandler: FormFullHandler): any => {
     let fixedValue = this.value;
     if (typeof this.value === "string") {
       fixedValue = this.value.trim();
@@ -145,16 +153,38 @@ class FormFieldHandler {
       : fixedValue;
   };
 
+  private _getMaskedValue(): FieldValueType {
+    return this.mask ? this.mask(this.value) : this.value;
+  }
+
+  private async _getErrorMessage(
+    value: FieldValueType,
+    formHandler: FormFullHandler
+  ): Promise<ErrorMessageType> {
+    if (this.validation) {
+      const message = this.validation(value, formHandler);
+      if (message) return message;
+    }
+    if (this.asyncValidation) {
+      const message = await this.asyncValidation(value, formHandler);
+      if (message) return message;
+    }
+    return null;
+  }
+
   validate = async (
     shouldUpdateInput: boolean,
-    formHandler: FormHandler
+    formHandler: FormFullHandler
   ): Promise<ErrorMessageType> => {
-    const maskedValue = this.mask ? this.mask(this.value) : this.value;
+    const maskedValue = this._getMaskedValue();
     const hasValue = Boolean(maskedValue) || maskedValue === 0;
     if (hasValue) {
-      if (this.validation) {
+      if (this.validation || this.asyncValidation) {
         this.setLoading(true);
-        const errorMessage = await this.validation(maskedValue, formHandler);
+        const errorMessage = await this._getErrorMessage(
+          maskedValue,
+          formHandler
+        );
         this.setLoading(false);
         if (errorMessage) {
           const eMessage = !this.required
@@ -196,4 +226,4 @@ class FormFieldHandler {
   };
 }
 
-export { FormFieldHandler };
+export { FieldHandler };

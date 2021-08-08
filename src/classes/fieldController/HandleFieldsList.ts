@@ -1,83 +1,82 @@
-import FormHandler from "../FormHandler";
+import FormFullHandler from "../FormFullHandler";
 import {
+  AsyncValidationType,
   ErrorMessageType,
+  FieldActionType,
   FieldRef,
   FieldValueType,
-  FormFieldHandlerContructor,
+  FieldHandlerParams,
   MaskToSubmitType,
   MaskType,
   ValidationType,
-} from "../types/FormFieldHandler";
-import { DataReturnType } from "../types/FormHandler";
-import { ActualValues, FormFields } from "../types/HandleFormFields";
-import { FormFieldHandler } from "./FormFieldHandler";
+} from "./types/FieldHandler";
+import { FFDataReturnType } from "../types/FormFullHandler";
+import { ActualValuesType, Fields } from "./types/HandleFieldsList";
+import { FieldHandler } from "./FieldHandler";
 
-class HandleFormFields {
-  formFields: FormFields = {};
+class HandleFieldsList {
+  formFields: Fields = {};
   fieldNames: Array<string> = [];
-  actualValues: ActualValues = {};
+  actualValues: ActualValuesType = {};
 
   static invalidNameError(name: string): void {
     throw new Error(
-      `O campo do formConfig espera receber a propriedade "name" como string, mas recebeu um "${typeof name}".`
+      `The "form-full" field expects to receive the "name" property as a string, but it received a "${typeof name}".`
     );
   }
 
   static fieldAlreadyExist(name: string): void {
-    throw new Error(`O campo "${name}" já foi criado.`);
+    throw new Error(`The field "${name}" has already been created.`);
   }
 
   static cantDeleteField(name: string): void {
-    throw new Error(`O campo "${name}" não existe e não pôde ser deletado.`);
+    throw new Error(`The field "${name}" doesn't exist and cannot be removed.`);
   }
 
   static cantGetField(name: string): void {
     throw new Error(
-      `O campo "${name}" não existe e não pôde ser utilizado/modificado.`
+      `The field "${name}" doesn't exist and cannot be used/modified.`
     );
   }
 
   static treatUpdateField = (
     name: string,
-    formFields: FormFields,
+    formFields: Fields,
     callback: () => any
   ) => {
     if (typeof name !== "string") {
-      HandleFormFields.invalidNameError(name);
+      HandleFieldsList.invalidNameError(name);
     } else if (formFields[name]) {
       return callback();
     } else {
-      HandleFormFields.cantGetField(name);
+      HandleFieldsList.cantGetField(name);
     }
   };
 
-  setNewField = (
-    name: string,
-    fieldParams: FormFieldHandlerContructor
-  ): void => {
+  setNewField = (name: string, fieldParams: FieldHandlerParams): void => {
     if (typeof name !== "string") {
-      HandleFormFields.invalidNameError(name);
+      HandleFieldsList.invalidNameError(name);
     } else if (!this.formFields[name]) {
       this.fieldNames.push(name);
-      this.formFields[name] = new FormFieldHandler(fieldParams);
+      this.formFields[name] = new FieldHandler(fieldParams);
 
       if (this.actualValues[name]) {
         this.setValue(name, this.actualValues[name]);
       }
     } else {
-      HandleFormFields.fieldAlreadyExist(name);
+      HandleFieldsList.fieldAlreadyExist(name);
     }
   };
 
   removeField = (name: string): void => {
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       delete this.formFields[name];
       const nameIndex = this.fieldNames.indexOf(name);
       this.fieldNames.splice(nameIndex, 1);
     });
   };
 
-  setActualValues = (actualValues: ActualValues): void => {
+  setActualValues = (actualValues: ActualValuesType): void => {
     if (actualValues) {
       this.fieldNames.forEach((name) => {
         if (actualValues[name] !== this.actualValues[name]) {
@@ -97,35 +96,34 @@ class HandleFormFields {
   };
 
   setFieldRequired = (name: string, required: ErrorMessageType): void => {
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setRequired(required);
     });
   };
 
   setFieldDefaultValue = (name: string, defaultValue: FieldValueType): void => {
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setDefaultValue(defaultValue);
     });
   };
   setFieldLabel = (name: string, label: string): void => {
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setLabel(label);
     });
   };
-  setFieldType = (name: string, type: any): void => {
-    // TODO input type enum
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
-      this.formFields[name].setType(type);
+  setFieldActionType = (name: string, actionType: FieldActionType): void => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
+      this.formFields[name].setType(actionType);
     });
   };
   setFieldIsFileValue = (name: string, isFileValue: boolean): void => {
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setIsFileValue(isFileValue);
     });
   };
 
   setFieldMask = (name: string, mask: MaskType): void => {
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setMask(mask);
     });
   };
@@ -133,34 +131,44 @@ class HandleFormFields {
     name: string,
     maskToSubmit: MaskToSubmitType
   ): void => {
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setMaskToSubmit(maskToSubmit);
     });
   };
   setFieldValidation = (name: string, validation: ValidationType): void => {
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setValidation(validation);
     });
   };
+
+  setFieldAsyncValidation = (
+    name: string,
+    asyncValidation: AsyncValidationType
+  ): void => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
+      this.formFields[name].setAsyncValidation(asyncValidation);
+    });
+  };
+
   getFieldRef = (name: string): FieldRef => {
-    return HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    return HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       return this.formFields[name].getRef();
     });
   };
 
   setValue = (name: string, value: FieldValueType): void => {
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].handleValue(value);
     });
   };
 
   setFormValue = (name: string, value: FieldValueType): void => {
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setValue(value);
     });
   };
 
-  _getValueToSubmit = (name: string, formHandler: FormHandler): any => {
+  _getValueToSubmit = (name: string, formHandler: FormFullHandler): any => {
     const value = this.getValue(name, false, formHandler);
     if (Boolean(value) || value === 0) {
       return this.formFields[name].getFormatedValueToSubmit(formHandler);
@@ -176,13 +184,13 @@ class HandleFormFields {
   };
 
   clearValue = (name: string): void => {
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].clearValue();
     });
   };
 
   setValueToDefault = (name: string): void => {
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setValueToDefault();
     });
   };
@@ -201,7 +209,7 @@ class HandleFormFields {
 
   _getValue = (name: string): any => {
     const {
-      type,
+      actionType,
       isFileValue,
       value: _value,
       valueFile: _valueFile,
@@ -209,12 +217,12 @@ class HandleFormFields {
     const valueFile = _valueFile;
     const value = _value;
 
-    return type === "file" && isFileValue ? valueFile : value;
+    return actionType === "file" && isFileValue ? valueFile : value;
   };
 
-  _getFinalValue = (name: string, formHandler: FormHandler): any => {
+  _getFinalValue = (name: string, formHandler: FormFullHandler): any => {
     const {
-      type,
+      actionType,
       isFileValue,
       maskToSubmit,
       value: _value,
@@ -223,7 +231,8 @@ class HandleFormFields {
     const valueFile = _valueFile;
     const value = _value;
 
-    const selectedValue = type === "file" && isFileValue ? valueFile : value;
+    const selectedValue =
+      actionType === "file" && isFileValue ? valueFile : value;
     const withMask = selectedValue && maskToSubmit;
     return withMask && maskToSubmit
       ? maskToSubmit(selectedValue, formHandler)
@@ -233,7 +242,7 @@ class HandleFormFields {
   getValue = (
     name: string,
     withMaskToSubmit: boolean,
-    formHandler: FormHandler
+    formHandler: FormFullHandler
   ): any => {
     if (this.formFields[name]) {
       return withMaskToSubmit
@@ -246,8 +255,8 @@ class HandleFormFields {
     return this.actualValues[name];
   };
 
-  getValues = (formHandler: FormHandler): DataReturnType => {
-    const data: DataReturnType = {};
+  getValues = (formHandler: FormFullHandler): FFDataReturnType => {
+    const data: FFDataReturnType = {};
     this.fieldNames.forEach((name) => {
       data[name] = this._getValueToSubmit(name, formHandler);
       return null;
@@ -264,9 +273,9 @@ class HandleFormFields {
 
   getValidValues = (
     saveToSubmit: boolean,
-    formHandler: FormHandler
-  ): DataReturnType => {
-    const data: DataReturnType = {};
+    formHandler: FormFullHandler
+  ): FFDataReturnType => {
+    const data: FFDataReturnType = {};
     this.fieldNames.forEach((name) => {
       const input = this.formFields[name];
       if (!input.error) {
@@ -280,13 +289,13 @@ class HandleFormFields {
 
   _testErrorAndReturnData = async (
     name: string,
-    formHandler: FormHandler,
+    formHandler: FormFullHandler,
     concatErrorMessages: (
       label: string | undefined,
       errorMessage: ErrorMessageType
     ) => void,
     errorCallback: () => void
-  ): Promise<DataReturnType> => {
+  ): Promise<FFDataReturnType> => {
     const errorMessage = await this.testFieldError(name, true, formHandler);
     if (errorMessage) {
       concatErrorMessages(this.formFields[name].label, errorMessage);
@@ -298,9 +307,9 @@ class HandleFormFields {
   testFieldError = async (
     name: string,
     shouldUpdateInput: boolean,
-    formHandler: FormHandler
+    formHandler: FormFullHandler
   ): Promise<ErrorMessageType> => {
-    return await HandleFormFields.treatUpdateField(
+    return await HandleFieldsList.treatUpdateField(
       name,
       this.formFields,
       () => {
@@ -310,14 +319,14 @@ class HandleFormFields {
   };
 
   testErrorsAndReturnData = async (
-    formHandler: FormHandler,
+    formHandler: FormFullHandler,
     concatErrorMessages: (
       label: string | undefined,
       errorMessage: ErrorMessageType
     ) => void
-  ): Promise<{ hasError: boolean; data: DataReturnType }> => {
+  ): Promise<{ hasError: boolean; data: FFDataReturnType }> => {
     let hasError = false;
-    const data: DataReturnType = {};
+    const data: FFDataReturnType = {};
 
     await Promise.all(
       this.fieldNames.map(async (name) => {
@@ -340,16 +349,16 @@ class HandleFormFields {
   };
 
   setCustomError = (name: string, message: ErrorMessageType): void => {
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].errorHandler(message);
     });
   };
 
   setCustomValid = (name: string, valid: boolean): void => {
-    HandleFormFields.treatUpdateField(name, this.formFields, () => {
+    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].validHandler(valid);
     });
   };
 }
 
-export { HandleFormFields };
+export { HandleFieldsList };
