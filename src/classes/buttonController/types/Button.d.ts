@@ -1,4 +1,4 @@
-import { ButtonActionType } from "../ButtonHandler";
+import { ButtonActionType } from "./ButtonHandler";
 
 export interface ButtonProps {
   name: string;

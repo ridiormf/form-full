@@ -1,4 +1,4 @@
-import { FieldHandler } from "../classes/fieldController/FieldHandler";
+import { FieldHandler } from "../FieldHandler";
 import { FieldValueType } from "./FieldHandler";
 
 export interface ActualValuesType {

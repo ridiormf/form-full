@@ -1,5 +1,5 @@
 import FormFullHandler from "../../FormFullHandler";
-import { FieldValueType } from "../FieldHandler";
+import { FieldValueType } from "./FieldHandler";
 
 export type FieldFormListener = (
   event: any,
