@@ -1,6 +1,6 @@
 {
   "name": "form-full",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A complete form package for your React project",
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
