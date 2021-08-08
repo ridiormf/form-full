@@ -61,7 +61,9 @@ export default function useField(
   }
 
   function testFieldError(): void {
-    ffHandler?.testFieldError(props.name);
+    setTimeout(() => {
+      ffHandler?.testFieldError(props.name);
+    }, 10);
   }
 
   const onChange = React.useCallback(
