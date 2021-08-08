@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import { FormContext } from "./components/FormFull";
-import FormFullHandler from "./classes/FormFullHandler";
 import { FieldProps } from "./classes/fieldController/types/Field";
 import {
   ErrorMessageType,
@@ -9,19 +8,11 @@ import {
   FieldValueType,
   FieldHandlerParams,
 } from "./classes/fieldController/types/FieldHandler";
+import { FieldConnectorReturnType } from "./classes/types/connector";
 
-export default function useField(props: FieldProps & FieldHandlerParams): {
-  value: FieldValueType;
-  error: ErrorMessageType;
-  valid: boolean;
-  validationLoading: boolean;
-  formDisabled: boolean;
-  onSubmit: (event: any) => void;
-  onBlur: (event: any) => void;
-  setConfigs: (event: any | undefined | null, value: FieldValueType) => void;
-  ref: FieldRef;
-  ffHandler: FormFullHandler | undefined;
-} {
+export default function useField(
+  props: FieldProps & FieldHandlerParams
+): FieldConnectorReturnType {
   const getInitialStringValue = React.useCallback((): FieldValueType => {
     const { defaultValue = "", mask } = props;
     const value = defaultValue;
@@ -56,7 +47,24 @@ export default function useField(props: FieldProps & FieldHandlerParams): {
     [ffHandler, props]
   );
 
-  const setConfigs = React.useCallback(
+  function onBlur(event: any): void {
+    setTimeout(() => {
+      if (props.submitOnBlur) {
+        ffHandler?.submit();
+      } else {
+        ffHandler?.testFieldError(props.name);
+      }
+      if (props.onBlur) {
+        props.onBlur(event, value, ffHandler);
+      }
+    }, 10);
+  }
+
+  function testFieldError(): void {
+    ffHandler?.testFieldError(props.name);
+  }
+
+  const onChange = React.useCallback(
     (event: any | undefined | null, value: FieldValueType = "") => {
       setValueWithoutOnChangeString(value);
 
@@ -72,7 +80,7 @@ export default function useField(props: FieldProps & FieldHandlerParams): {
       ref: ref.current,
       errorHandler: setError,
       validHandler: setValid,
-      handleValue: (value) => setConfigs(null, value),
+      handleValue: (value) => onChange(null, value),
       setLoading: setValidationLoading,
       value,
       actionType: props.actionType,
@@ -89,7 +97,7 @@ export default function useField(props: FieldProps & FieldHandlerParams): {
     return () => {
       ffHandler?.removeField(props.name);
     };
-  }, [ffHandler, props, setError, ref, value, setConfigs]);
+  }, [ffHandler, props, setError, ref, value, onChange]);
 
   React.useEffect(mount, []);
 
@@ -103,18 +111,6 @@ export default function useField(props: FieldProps & FieldHandlerParams): {
     }
   }
 
-  function onBlur(event: any): void {
-    setTimeout(() => {
-      if (props.submitOnBlur) {
-        ffHandler?.submit();
-      }
-      if (props.onBlur) {
-        props.onBlur(event, value, ffHandler);
-      }
-      ffHandler?.testFieldError(props.name);
-    }, 10);
-  }
-
   return {
     value,
     error,
@@ -123,7 +119,8 @@ export default function useField(props: FieldProps & FieldHandlerParams): {
     formDisabled,
     onSubmit,
     onBlur,
-    setConfigs,
+    onChange,
+    testFieldError,
     ref,
     ffHandler,
   };

@@ -2,15 +2,12 @@
 
 import React from "react";
 import { FormContext } from "./components/FormFull";
-import FormFullHandler from "./classes/FormFullHandler";
 import { ButtonProps } from "./classes/buttonController/types/Button";
+import { ButtonConnectorReturnType } from "./classes/types/connector";
 
-export default function useButton(props: ButtonProps): {
-  onClick: (event: any) => void;
-  ffHandler: FormFullHandler | undefined;
-  formDisabled: boolean;
-  formLoading: boolean;
-} {
+export default function useButton(
+  props: ButtonProps
+): ButtonConnectorReturnType {
   const [formDisabled, setDisabled] = React.useState(false);
   const [formLoading, setLoading] = React.useState(false);
 
