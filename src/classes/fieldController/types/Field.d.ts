@@ -4,7 +4,7 @@ import { FieldValueType } from "./FieldHandler";
 export type FieldFormListener = (
   event: any,
   value?: FieldValueType,
-  formHandler?: FormFullHandler
+  ffHandler?: FormFullHandler
 ) => void;
 
 export type FieldProps = {

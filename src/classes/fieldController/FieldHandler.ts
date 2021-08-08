@@ -141,7 +141,7 @@ class FieldHandler {
     this.handleValue(this.defaultValue);
   };
 
-  getFormatedValueToSubmit = (formHandler: FormFullHandler): any => {
+  getFormatedValueToSubmit = (ffHandler: FormFullHandler): any => {
     let fixedValue = this.value;
     if (typeof this.value === "string") {
       fixedValue = this.value.trim();
@@ -149,7 +149,7 @@ class FieldHandler {
       fixedValue = Number(String(this.value).trim());
     }
     return !!this.maskToSubmit && fixedValue
-      ? this.maskToSubmit(fixedValue, formHandler)
+      ? this.maskToSubmit(fixedValue, ffHandler)
       : fixedValue;
   };
 
@@ -159,14 +159,14 @@ class FieldHandler {
 
   private async _getErrorMessage(
     value: FieldValueType,
-    formHandler: FormFullHandler
+    ffHandler: FormFullHandler
   ): Promise<ErrorMessageType> {
     if (this.validation) {
-      const message = this.validation(value, formHandler);
+      const message = this.validation(value, ffHandler);
       if (message) return message;
     }
     if (this.asyncValidation) {
-      const message = await this.asyncValidation(value, formHandler);
+      const message = await this.asyncValidation(value, ffHandler);
       if (message) return message;
     }
     return null;
@@ -174,7 +174,7 @@ class FieldHandler {
 
   validate = async (
     shouldUpdateInput: boolean,
-    formHandler: FormFullHandler
+    ffHandler: FormFullHandler
   ): Promise<ErrorMessageType> => {
     const maskedValue = this._getMaskedValue();
     const hasValue = Boolean(maskedValue) || maskedValue === 0;
@@ -183,7 +183,7 @@ class FieldHandler {
         this.setLoading(true);
         const errorMessage = await this._getErrorMessage(
           maskedValue,
-          formHandler
+          ffHandler
         );
         this.setLoading(false);
         if (errorMessage) {

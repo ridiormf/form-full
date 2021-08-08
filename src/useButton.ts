@@ -7,41 +7,41 @@ import { ButtonProps } from "./classes/buttonController/types/Button";
 
 export default function useButton(props: ButtonProps): {
   onClick: (event: any) => void;
-  formHandler: FormFullHandler | undefined;
+  ffHandler: FormFullHandler | undefined;
   formDisabled: boolean;
   formLoading: boolean;
 } {
   const [formDisabled, setDisabled] = React.useState(false);
   const [formLoading, setLoading] = React.useState(false);
 
-  const formHandler = React.useContext(FormContext);
+  const ffHandler = React.useContext(FormContext);
 
   React.useEffect(() => {
-    formHandler?.setNewButton(props.name, {
+    ffHandler?.setNewButton(props.name, {
       setDisabled: setDisabled,
       setLoading: setLoading,
       actionType: props.actionType,
     });
     return (): void => {
-      formHandler?.removeButton(props.name);
+      ffHandler?.removeButton(props.name);
     };
   }, []);
 
   const onClick = React.useCallback(
     (event): void => {
       if (props.actionType === "submit") {
-        formHandler?.submit();
+        ffHandler?.submit();
       } else if (props.actionType === "clear") {
-        formHandler?.clearAllValues(false);
+        ffHandler?.clearAllValues(false);
       } else if (props.actionType === "clearDefault") {
-        formHandler?.clearAllValues(true);
+        ffHandler?.clearAllValues(true);
       }
       if (props.onClick) {
         props.onClick(event);
       }
     },
-    [props, formHandler]
+    [props, ffHandler]
   );
 
-  return { onClick, formHandler, formDisabled, formLoading };
+  return { onClick, ffHandler, formDisabled, formLoading };
 }

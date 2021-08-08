@@ -20,7 +20,7 @@ export default function useField(props: FieldProps & FieldHandlerParams): {
   onBlur: (event: any) => void;
   setConfigs: (event: any | undefined | null, value: FieldValueType) => void;
   ref: FieldRef;
-  formHandler: FormFullHandler | undefined;
+  ffHandler: FormFullHandler | undefined;
 } {
   const getInitialStringValue = React.useCallback((): FieldValueType => {
     const { defaultValue = "", mask } = props;
@@ -36,9 +36,9 @@ export default function useField(props: FieldProps & FieldHandlerParams): {
   const [error, setError] = React.useState<ErrorMessageType>("");
   const [valid, setValid] = React.useState(false);
   const ref = React.useRef<FieldRef>();
-  const formHandler = React.useContext(FormContext);
+  const ffHandler = React.useContext(FormContext);
   const [formDisabled, setFormDisabled] = React.useState<boolean>(
-    !!formHandler?.getDisabledForm()
+    !!ffHandler?.getDisabledForm()
   );
 
   const setValueWithoutOnChangeString = React.useCallback(
@@ -49,11 +49,11 @@ export default function useField(props: FieldProps & FieldHandlerParams): {
         maxLengthValue = String(value).substring(0, maxLength);
       }
       const resultedValue = mask ? mask(maxLengthValue) : maxLengthValue;
-      formHandler?.setFormValue(name, resultedValue);
+      ffHandler?.setFormValue(name, resultedValue);
       setStateValue(resultedValue);
       setValid(false);
     },
-    [formHandler, props]
+    [ffHandler, props]
   );
 
   const setConfigs = React.useCallback(
@@ -61,14 +61,14 @@ export default function useField(props: FieldProps & FieldHandlerParams): {
       setValueWithoutOnChangeString(value);
 
       if (props.onChange) {
-        props.onChange(event, value, formHandler);
+        props.onChange(event, value, ffHandler);
       }
     },
-    [formHandler, props, setValueWithoutOnChangeString]
+    [ffHandler, props, setValueWithoutOnChangeString]
   );
 
   const mount = React.useCallback(() => {
-    formHandler?.setNewField(props.name, {
+    ffHandler?.setNewField(props.name, {
       ref: ref.current,
       errorHandler: setError,
       validHandler: setValid,
@@ -87,31 +87,31 @@ export default function useField(props: FieldProps & FieldHandlerParams): {
       disableHandler: setFormDisabled,
     });
     return () => {
-      formHandler?.removeField(props.name);
+      ffHandler?.removeField(props.name);
     };
-  }, [formHandler, props, setError, ref, value, setConfigs]);
+  }, [ffHandler, props, setError, ref, value, setConfigs]);
 
   React.useEffect(mount, []);
 
   React.useEffect(() => {
-    formHandler?.setFieldRequired(props.name, props.required);
-  }, [props, formHandler]);
+    ffHandler?.setFieldRequired(props.name, props.required);
+  }, [props, ffHandler]);
 
   function onSubmit(event: any): void {
     if (!event?.shiftKey && event?.charCode === 13) {
-      formHandler?.submit();
+      ffHandler?.submit();
     }
   }
 
   function onBlur(event: any): void {
     setTimeout(() => {
       if (props.submitOnBlur) {
-        formHandler?.submit();
+        ffHandler?.submit();
       }
       if (props.onBlur) {
-        props.onBlur(event, value, formHandler);
+        props.onBlur(event, value, ffHandler);
       }
-      formHandler?.testFieldError(props.name);
+      ffHandler?.testFieldError(props.name);
     }, 10);
   }
 
@@ -125,6 +125,6 @@ export default function useField(props: FieldProps & FieldHandlerParams): {
     onBlur,
     setConfigs,
     ref,
-    formHandler,
+    ffHandler,
   };
 }

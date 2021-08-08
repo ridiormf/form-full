@@ -7,15 +7,15 @@ export type FieldValueType = any;
 export type ErrorMessageType = string | null | undefined;
 export type MaskType = ((value: FieldValueType) => any) | undefined;
 export type MaskToSubmitType =
-  | ((value: FieldValueType, formHandler?: FormFullHandler) => any)
+  | ((value: FieldValueType, ffHandler?: FormFullHandler) => any)
   | undefined;
 export type ValidationType =
-  | ((value: FieldValueType, formHandler?: FormFullHandler) => ErrorMessageType)
+  | ((value: FieldValueType, ffHandler?: FormFullHandler) => ErrorMessageType)
   | undefined;
 export type AsyncValidationType =
   | ((
       value: FieldValueType,
-      formHandler?: FormFullHandler
+      ffHandler?: FormFullHandler
     ) => Promise<ErrorMessageType>)
   | undefined;
 export type FieldRef = any;

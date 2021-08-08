@@ -8,9 +8,9 @@ export const FormContext = React.createContext<FormFullHandler | undefined>(
 );
 
 function FormFull(props: FormFullProps): JSX.Element {
-  const formHandler = React.useRef<FormFullHandler>();
+  const ffHandler = React.useRef<FormFullHandler>();
   useConstructor(() => {
-    formHandler.current = new FormFullHandler({
+    ffHandler.current = new FormFullHandler({
       onSubmit: props.onSubmit,
       clearOnSubmit: props.clearOnSubmit,
       submitOnClear: props.submitOnClear,
@@ -19,27 +19,27 @@ function FormFull(props: FormFullProps): JSX.Element {
     });
 
     if (props.actualValues) {
-      formHandler.current.setActualValues(props.actualValues);
+      ffHandler.current.setActualValues(props.actualValues);
     }
     if (props.disabled) {
-      formHandler.current.setDisabled(props.disabled);
+      ffHandler.current.setDisabled(props.disabled);
     }
 
     if (props.formRef) {
-      props.formRef(formHandler.current);
+      props.formRef(ffHandler.current);
     }
   });
 
   React.useEffect(() => {
-    formHandler.current?.setActualValues(props.actualValues ?? {});
+    ffHandler.current?.setActualValues(props.actualValues ?? {});
   }, [props.actualValues]);
 
   React.useEffect(() => {
-    formHandler.current?.setAllDisabled(props.disabled ?? false);
+    ffHandler.current?.setAllDisabled(props.disabled ?? false);
   }, [props.disabled]);
 
   return (
-    <FormContext.Provider value={formHandler.current}>
+    <FormContext.Provider value={ffHandler.current}>
       {props.children}
     </FormContext.Provider>
   );

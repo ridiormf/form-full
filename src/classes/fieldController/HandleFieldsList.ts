@@ -168,10 +168,10 @@ class HandleFieldsList {
     });
   };
 
-  _getValueToSubmit = (name: string, formHandler: FormFullHandler): any => {
-    const value = this.getValue(name, false, formHandler);
+  _getValueToSubmit = (name: string, ffHandler: FormFullHandler): any => {
+    const value = this.getValue(name, false, ffHandler);
     if (Boolean(value) || value === 0) {
-      return this.formFields[name].getFormatedValueToSubmit(formHandler);
+      return this.formFields[name].getFormatedValueToSubmit(ffHandler);
     }
   };
 
@@ -220,7 +220,7 @@ class HandleFieldsList {
     return actionType === "file" && isFileValue ? valueFile : value;
   };
 
-  _getFinalValue = (name: string, formHandler: FormFullHandler): any => {
+  _getFinalValue = (name: string, ffHandler: FormFullHandler): any => {
     const {
       actionType,
       isFileValue,
@@ -235,18 +235,18 @@ class HandleFieldsList {
       actionType === "file" && isFileValue ? valueFile : value;
     const withMask = selectedValue && maskToSubmit;
     return withMask && maskToSubmit
-      ? maskToSubmit(selectedValue, formHandler)
+      ? maskToSubmit(selectedValue, ffHandler)
       : selectedValue;
   };
 
   getValue = (
     name: string,
     withMaskToSubmit: boolean,
-    formHandler: FormFullHandler
+    ffHandler: FormFullHandler
   ): any => {
     if (this.formFields[name]) {
       return withMaskToSubmit
-        ? this._getFinalValue(name, formHandler)
+        ? this._getFinalValue(name, ffHandler)
         : this._getValue(name);
     }
   };
@@ -255,10 +255,10 @@ class HandleFieldsList {
     return this.actualValues[name];
   };
 
-  getValues = (formHandler: FormFullHandler): FFDataReturnType => {
+  getValues = (ffHandler: FormFullHandler): FFDataReturnType => {
     const data: FFDataReturnType = {};
     this.fieldNames.forEach((name) => {
-      data[name] = this._getValueToSubmit(name, formHandler);
+      data[name] = this._getValueToSubmit(name, ffHandler);
       return null;
     });
     return data;
@@ -273,14 +273,14 @@ class HandleFieldsList {
 
   getValidValues = (
     saveToSubmit: boolean,
-    formHandler: FormFullHandler
+    ffHandler: FormFullHandler
   ): FFDataReturnType => {
     const data: FFDataReturnType = {};
     this.fieldNames.forEach((name) => {
       const input = this.formFields[name];
       if (!input.error) {
         data[name] = saveToSubmit
-          ? this._getValueToSubmit(name, formHandler)
+          ? this._getValueToSubmit(name, ffHandler)
           : input.value;
       }
     });
@@ -289,37 +289,37 @@ class HandleFieldsList {
 
   _testErrorAndReturnData = async (
     name: string,
-    formHandler: FormFullHandler,
+    ffHandler: FormFullHandler,
     concatErrorMessages: (
       label: string | undefined,
       errorMessage: ErrorMessageType
     ) => void,
     errorCallback: () => void
   ): Promise<FFDataReturnType> => {
-    const errorMessage = await this.testFieldError(name, true, formHandler);
+    const errorMessage = await this.testFieldError(name, true, ffHandler);
     if (errorMessage) {
       concatErrorMessages(this.formFields[name].label, errorMessage);
       errorCallback();
     }
-    return this._getValueToSubmit(name, formHandler);
+    return this._getValueToSubmit(name, ffHandler);
   };
 
   testFieldError = async (
     name: string,
     shouldUpdateInput: boolean,
-    formHandler: FormFullHandler
+    ffHandler: FormFullHandler
   ): Promise<ErrorMessageType> => {
     return await HandleFieldsList.treatUpdateField(
       name,
       this.formFields,
       () => {
-        return this.formFields[name].validate(shouldUpdateInput, formHandler);
+        return this.formFields[name].validate(shouldUpdateInput, ffHandler);
       }
     );
   };
 
   testErrorsAndReturnData = async (
-    formHandler: FormFullHandler,
+    ffHandler: FormFullHandler,
     concatErrorMessages: (
       label: string | undefined,
       errorMessage: ErrorMessageType
@@ -332,7 +332,7 @@ class HandleFieldsList {
       this.fieldNames.map(async (name) => {
         data[name] = await this._testErrorAndReturnData(
           name,
-          formHandler,
+          ffHandler,
           concatErrorMessages,
           () => {
             if (!hasError) {
