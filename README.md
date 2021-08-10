@@ -16,23 +16,6 @@ npm install form-full
 yarn add form-full
 ```
 
-## FormFull
-
-`props` passed to the component that manages the form:
-
-| Name          | Type      | Default      | Description                                                                                                                     |
-| ------------- | --------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| actualValues  | object    |              | Object that defines the current values ​​of each field in the form. example: `{ username: "form", password: "full123" }`        |
-| children      | ReactNode |              | Rendered components. All fields and buttons on the form must be children of the `FormFull` component                            |
-| clearOnSubmit | bool      |              | If `true` is passed, the fields will be cleared (or filled in by default) when submitting the form                              |
-| disabled      | bool      |              | If `true` is passed, all fields will be disabled                                                                                |
-| formRef       | func      |              | Function to get the class that manages the form, normally used to handle exceptions                                             |
-| onSubmit      | func      | **required** | Function called when the form is submitted, receiving the values ​​in a object `{ key: value }`                                 |
-| onChange      | func      |              | Function called when the value of any field changes                                                                             |
-| submitOnClear | bool      |              | If `true` is passed, the function `onSubmit` will be called when the form is cleared. \*\*Only works if all fields are optional |
-
-### More documentation and guides are under development and will be made available upon release of version 1.0.0
-
 ## Usage
 
 ```jsx
@@ -140,7 +123,7 @@ function Input(props) {
     testFieldError,
     ref,
     formDisabled,
-    validationLoading,
+    formLoading,
     // ffHandler, If some extra treatment is needed
   } = useFormFull.field(props);
 
@@ -157,7 +140,7 @@ function Input(props) {
         value={value}
         ref={ref}
         required={!!required}
-        disabled={formDisabled || validationLoading}
+        disabled={formDisabled || formLoading}
         onKeyPress={onSubmit}
         onChange={(event) => {
           onChange(event, event.target.value);
@@ -208,3 +191,44 @@ function Button({
 
 export default React.memo(Button);
 ```
+
+## Documentation
+
+### FormFull
+
+`props` passed to the component that manages the form:
+
+| Name          | Type      | Required | Description                                                                                                                                                                                                                             |
+| ------------- | --------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| actualValues  | object    | NO       | Object that defines the current values ​​of each field in the form. example: `{ username: "form", password: "full123" }`. **important**: Values ​​will only be inserted into the field if they change from the previous "actualValues". |
+| children      | ReactNode | **YES**  | Rendered components. All fields and buttons on the form must be children of the `FormFull` component                                                                                                                                    |
+| clearOnSubmit | bool      | NO       | If `true` is passed, the fields will be cleared (or filled in by default) when submitting the form                                                                                                                                      |
+| disabled      | bool      | NO       | If `true` is passed, all fields will be disabled                                                                                                                                                                                        |
+| formRef       | func      | NO       | Function to get the class that manages the form, normally used to handle exceptions and others advanced treatments                                                                                                                      |
+| onSubmit      | func      | **YES**  | Function called when the form is submitted, receiving the values ​​in a object `{ key: value }`                                                                                                                                         |
+| onChange      | func      | NO       | Function called when the value of any field changes                                                                                                                                                                                     |
+| submitOnClear | bool      | NO       | If `true` is passed, the function `onSubmit` will be called when the form is cleared. \*\*Only works if all fields are optional                                                                                                         |
+
+### useFormFull.field
+
+Hook used to connect a **field** component to be controlled by `form-full`
+
+`useFormFull.field` parameters ():
+
+| Name            | Type   | Required   | Description                                                                                                                                                                                                      |
+| --------------- | ------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| asyncValidation | func   | NO         | used to validate input asynchronously (such as validating the existence of the username in a registration). **Important**: Like `validation`, need to return a string (if invalid) or null undefined (if valid). |
+| defaultValue    | any    | NO         | Default field value. Value the component starts when it is first rendered                                                                                                                                        |
+| label           | string | NO/**YES** | Label used to concat errors message in a single object. Used to display all errors in a custom way. **Important**: `label` is required if `placeholder` is not passed                                            |
+| mask            | func   | NO         | Function to format the end-user visible value                                                                                                                                                                    |
+| maskToSubmit    | func   | NO         | Function to treat value when the form is submitted, converting it to the most suitable value for the developer                                                                                                   |
+| maxLength       | number | NO         | Limits the number of characters in the field. It is a native parameter, but `form-full` also uses it                                                                                                             |
+| name            | string | **YES**    | Field name to be managed by the form. When the form is submitted the value will be inserted in a key of this name                                                                                                |
+| onBlur          | func   | NO         | Function that will be called when the input loses focus. It is necessary to pass to "useFormFull.field" and not use it directly in the field                                                                     |
+| onChange        | func   | NO         | Function that will be called when the input value changes. It is necessary to pass to "useFormFull.field" and not use it directly in the field                                                                   |
+| placeholder     | string | NO/**YES** | Replaces and is required if the "label" is not passed                                                                                                                                                            |
+| required        | string | NO         | Error message that defines the field as required. It will be shown whenever the field validation is called and only if it is not filled.                                                                         |
+| submitOnBlur    | bool   | NO         | If`true`is passed the form will be submitted when field loses focus.                                                                                                                                             |
+| validation      | func   | NO         | Used to validate input. **Important**: Like`asyncValidation`, need to return a string (if invalid) or null undefined (if valid).                                                                                 |
+
+`useFormFull.field` return values:

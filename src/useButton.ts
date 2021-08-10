@@ -29,9 +29,9 @@ export default function useButton(
       if (props.actionType === "submit") {
         ffHandler?.submit();
       } else if (props.actionType === "clear") {
-        ffHandler?.clearAllValues(false);
+        ffHandler?.clearFields(false);
       } else if (props.actionType === "clearDefault") {
-        ffHandler?.clearAllValues(true);
+        ffHandler?.clearFields(true);
       }
       if (props.onClick) {
         props.onClick(event);

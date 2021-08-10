@@ -4,7 +4,6 @@ import { ButtonHandlerParams } from "./buttonController/types/ButtonHandler";
 import {
   AsyncValidationType,
   ErrorMessageType,
-  FieldActionType,
   FieldRef,
   FieldValueType,
   FieldHandlerParams,
@@ -13,6 +12,7 @@ import {
   ValidationType,
 } from "./fieldController/types/FieldHandler";
 import {
+  ErrorLabelMessage,
   FFDataReturnType,
   FormFullHandlerParams,
 } from "./types/FormFullHandler";
@@ -25,7 +25,7 @@ export default class FormFullHandler {
   onChange;
   disabled = false;
 
-  errorsMessages: Array<string> = [];
+  errorsMessages: Array<ErrorLabelMessage> = [];
 
   formButtonsHandler: HandleButtonsList;
   formFieldsHandler: HandleFieldsList;
@@ -95,12 +95,6 @@ export default class FormFullHandler {
   setFieldLabel = (name: string, label: string): void => {
     this.formFieldsHandler.setFieldLabel(name, label);
   };
-  setFieldActionType = (name: string, actionType: FieldActionType) => {
-    this.formFieldsHandler.setFieldActionType(name, actionType);
-  };
-  setFieldIsFileValue = (name: string, isFileValue: boolean): void => {
-    this.formFieldsHandler.setFieldIsFileValue(name, isFileValue);
-  };
   setFieldMask = (name: string, mask: MaskType): void => {
     this.formFieldsHandler.setFieldMask(name, mask);
   };
@@ -136,12 +130,8 @@ export default class FormFullHandler {
     }
   };
 
-  clearValue = (name: string): void => {
-    this.formFieldsHandler.clearValue(name);
-  };
-
-  setValueToDefault = (name: string): void => {
-    this.formFieldsHandler.setValueToDefault(name);
+  clearValue = (name: string, setDefault: boolean = true): void => {
+    this.formFieldsHandler.clearValue(name, setDefault);
   };
 
   getValue = (name: string, withMaskToSubmit: boolean): void => {
@@ -170,16 +160,16 @@ export default class FormFullHandler {
   }> => {
     return this.formFieldsHandler.testErrorsAndReturnData(
       this,
-      this.concatErrorMessages
+      this._concatErrorMessages
     );
   };
 
-  concatErrorMessages = (
+  private _concatErrorMessages = (
     label: string | undefined,
-    errorMessage: ErrorMessageType
+    message: ErrorMessageType
   ) => {
     if (label) {
-      this.errorsMessages.push(`${label}{*}${errorMessage}`);
+      this.errorsMessages.push({ label, message });
     }
   };
 
@@ -191,15 +181,15 @@ export default class FormFullHandler {
     );
   };
 
-  clearAllValues = (setDefault: boolean) => {
-    this.formFieldsHandler.clearAllValues(setDefault);
+  clearFields = (setDefault: boolean = true) => {
+    this.formFieldsHandler.clearFields(setDefault);
     if (this.submitOnClear) {
       this.submit();
     }
   };
 
-  clearSpecificValues = (names: Array<string>, setDefault: boolean) => {
-    this.formFieldsHandler.clearSpecificValues(names, setDefault);
+  clearSpecificFields = (names: Array<string>, setDefault: boolean = true) => {
+    this.formFieldsHandler.clearSpecificFields(names, setDefault);
   };
 
   setCustomError = (name: string, message: ErrorMessageType) => {
@@ -218,7 +208,7 @@ export default class FormFullHandler {
       if (!hasError) {
         this.onSubmit(data);
         if (this.clearOnSubmit) {
-          this.formFieldsHandler.clearAllValues(true);
+          this.formFieldsHandler.clearFields(true);
         }
       }
     }

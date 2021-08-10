@@ -2,7 +2,6 @@ import FormFullHandler from "../FormFullHandler";
 import {
   AsyncValidationType,
   ErrorMessageType,
-  FieldActionType,
   FieldRef,
   FieldValueType,
   FieldHandlerParams,
@@ -111,16 +110,6 @@ class HandleFieldsList {
       this.formFields[name].setLabel(label);
     });
   };
-  setFieldActionType = (name: string, actionType: FieldActionType): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
-      this.formFields[name].setType(actionType);
-    });
-  };
-  setFieldIsFileValue = (name: string, isFileValue: boolean): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
-      this.formFields[name].setIsFileValue(isFileValue);
-    });
-  };
 
   setFieldMask = (name: string, mask: MaskType): void => {
     HandleFieldsList.treatUpdateField(name, this.formFields, () => {
@@ -168,71 +157,41 @@ class HandleFieldsList {
     });
   };
 
-  _getValueToSubmit = (name: string, ffHandler: FormFullHandler): any => {
+  private _getValueToSubmit = (
+    name: string,
+    ffHandler: FormFullHandler
+  ): any => {
     const value = this.getValue(name, false, ffHandler);
     if (Boolean(value) || value === 0) {
       return this.formFields[name].getFormatedValueToSubmit(ffHandler);
     }
   };
 
-  _clearValue = (name: string, setDefault: boolean): void => {
-    if (setDefault) {
-      this.setValueToDefault(name);
-    } else {
-      this.clearValue(name);
-    }
-  };
-
-  clearValue = (name: string): void => {
+  clearValue = (name: string, setDefault: boolean): void => {
     HandleFieldsList.treatUpdateField(name, this.formFields, () => {
-      this.formFields[name].clearValue();
+      this.formFields[name].clearValue(setDefault);
     });
   };
 
-  setValueToDefault = (name: string): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
-      this.formFields[name].setValueToDefault();
-    });
-  };
-
-  clearAllValues = (setDefault: boolean): void => {
+  clearFields = (setDefault: boolean): void => {
     this.fieldNames.forEach((name) => {
-      this._clearValue(name, setDefault);
+      this.clearValue(name, setDefault);
     });
   };
 
-  clearSpecificValues = (names: Array<string>, setDefault: boolean): void => {
+  clearSpecificFields = (names: Array<string>, setDefault: boolean): void => {
     names.forEach((name) => {
-      this._clearValue(name, setDefault);
+      this.clearValue(name, setDefault);
     });
   };
 
-  _getValue = (name: string): any => {
-    const {
-      actionType,
-      isFileValue,
-      value: _value,
-      valueFile: _valueFile,
-    } = this.formFields[name];
-    const valueFile = _valueFile;
-    const value = _value;
-
-    return actionType === "file" && isFileValue ? valueFile : value;
+  private _getValue = (name: string): any => {
+    return this.formFields[name].value;
   };
 
-  _getFinalValue = (name: string, ffHandler: FormFullHandler): any => {
-    const {
-      actionType,
-      isFileValue,
-      maskToSubmit,
-      value: _value,
-      valueFile: _valueFile,
-    } = this.formFields[name];
-    const valueFile = _valueFile;
-    const value = _value;
-
-    const selectedValue =
-      actionType === "file" && isFileValue ? valueFile : value;
+  private _getFinalValue = (name: string, ffHandler: FormFullHandler): any => {
+    const { maskToSubmit, value } = this.formFields[name];
+    const selectedValue = value;
     const withMask = selectedValue && maskToSubmit;
     return withMask && maskToSubmit
       ? maskToSubmit(selectedValue, ffHandler)
@@ -287,7 +246,7 @@ class HandleFieldsList {
     return data;
   };
 
-  _testErrorAndReturnData = async (
+  private _testErrorAndReturnData = async (
     name: string,
     ffHandler: FormFullHandler,
     concatErrorMessages: (
