@@ -213,22 +213,22 @@ export default React.memo(Button);
 
 Hook used to connect a **field** component to be controlled by `form-full`
 
-`useFormFull.field` parameters ():
+Parameters:
 
-| Name            | Type   | Required   | Description                                                                                                                                                                                                      |
-| --------------- | ------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| asyncValidation | func   | NO         | used to validate input asynchronously (such as validating the existence of the username in a registration). **Important**: Like `validation`, need to return a string (if invalid) or null undefined (if valid). |
-| defaultValue    | any    | NO         | Default field value. Value the component starts when it is first rendered                                                                                                                                        |
-| label           | string | NO/**YES** | Label used to concat errors message in a single object. Used to display all errors in a custom way. **Important**: `label` is required if `placeholder` is not passed                                            |
-| mask            | func   | NO         | Function to format the end-user visible value                                                                                                                                                                    |
-| maskToSubmit    | func   | NO         | Function to treat value when the form is submitted, converting it to the most suitable value for the developer                                                                                                   |
-| maxLength       | number | NO         | Limits the number of characters in the field. It is a native parameter, but `form-full` also uses it                                                                                                             |
-| name            | string | **YES**    | Field name to be managed by the form. When the form is submitted the value will be inserted in a key of this name                                                                                                |
-| onBlur          | func   | NO         | Function that will be called when the input loses focus. It is necessary to pass to "useFormFull.field" and not use it directly in the field                                                                     |
-| onChange        | func   | NO         | Function that will be called when the input value changes. It is necessary to pass to "useFormFull.field" and not use it directly in the field                                                                   |
-| placeholder     | string | NO/**YES** | Replaces and is required if the "label" is not passed                                                                                                                                                            |
-| required        | string | NO         | Error message that defines the field as required. It will be shown whenever the field validation is called and only if it is not filled.                                                                         |
-| submitOnBlur    | bool   | NO         | If`true`is passed the form will be submitted when field loses focus.                                                                                                                                             |
-| validation      | func   | NO         | Used to validate input. **Important**: Like`asyncValidation`, need to return a string (if invalid) or null undefined (if valid).                                                                                 |
+| Name            | Type   | Required   | Description                                                                                                                                                                                                        |
+| --------------- | ------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| asyncValidation | func   | NO         | used to validate input asynchronously (such as validating the existence of the username in a registration). **Important**: Like `validation`, need to return a string (if invalid) or null / undefined (if valid). |
+| defaultValue    | any    | NO         | Default field value. Value the component starts when it is first rendered                                                                                                                                          |
+| label           | string | NO/**YES** | Label used to concat errors message in a single object. Used to display all errors in a custom way. **Important**: `label` is required if `placeholder` is not passed                                              |
+| mask            | func   | NO         | Function to format the end-user visible value                                                                                                                                                                      |
+| maskToSubmit    | func   | NO         | Function to treat value when the form is submitted, converting it to the most suitable value for the developer                                                                                                     |
+| maxLength       | number | NO         | Limits the number of characters in the field. It is a native parameter, but `form-full` also uses it                                                                                                               |
+| name            | string | **YES**    | Field name to be managed by the form. When the form is submitted the value will be inserted in a key of this name                                                                                                  |
+| onBlur          | func   | NO         | Function that will be called when the input loses focus. It is necessary to pass to "useFormFull.field" and not use it directly in the field                                                                       |
+| onChange        | func   | NO         | Function that will be called when the input value changes. It is necessary to pass to "useFormFull.field" and not use it directly in the field                                                                     |
+| placeholder     | string | NO/**YES** | Replaces and is required if the "label" is not passed                                                                                                                                                              |
+| required        | string | NO         | Error message that defines the field as required. It will be shown whenever the field validation is called and only if it is not filled.                                                                           |
+| submitOnBlur    | bool   | NO         | If`true`is passed the form will be submitted when field loses focus.                                                                                                                                               |
+| validation      | func   | NO         | Used to validate input. **Important**: Like`asyncValidation`, need to return a string (if invalid) or null / undefined (if valid).                                                                                 |
 
-`useFormFull.field` return values:
+Return values:
