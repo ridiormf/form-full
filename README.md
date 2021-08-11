@@ -18,6 +18,9 @@ yarn add form-full
 
 ## Usage
 
+You can preview using the form and how to create `form-full` components in this interactive demo:
+[![Edit Button](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/tsxir)
+
 ```jsx
 import React from "react";
 import { sleep } from "./utils";
@@ -89,9 +92,6 @@ export default function App() {
 ```
 
 First of all it will be necessary to create components that connect with `form-full`
-
-You can preview using the form and how to create "form-full" components in this interactive demo:
-[![Edit Button](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/tsxir)
 
 ### Example of an "Input" component
 
@@ -200,7 +200,7 @@ export default React.memo(Button);
 
 | Name          | Type      | Required | Description                                                                                                                                                                                                                             |
 | ------------- | --------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| actualValues  | object    | no       | Object that defines the current values ​​of each field in the form. example: `{ username: "form", password: "full123" }`. **important**: Values ​​will only be inserted into the field if they change from the previous "actualValues". |
+| actualValues  | object    | no       | Object that defines the current values ​​of each field in the form. example: `{ username: "form", password: "full123" }`. **important**: Values ​​will only be inserted into the field if they change from the previous `actualValues`. |
 | children      | ReactNode | `yes`    | Rendered components. All fields and buttons on the form must be children of the `FormFull` component                                                                                                                                    |
 | clearOnSubmit | bool      | no       | If `true` is passed, the fields will be cleared (or filled in by default) when submitting the form                                                                                                                                      |
 | disabled      | bool      | no       | If `true` is passed, all fields will be disabled                                                                                                                                                                                        |
@@ -213,7 +213,7 @@ export default React.memo(Button);
 
 Hook used to connect a **field** component to be controlled by `form-full`
 
-Parameters:
+Receives an object as a parameter with the properties:
 
 | Name            | Type   | Required | Description                                                                                                                                                                                                        |
 | --------------- | ------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -231,4 +231,39 @@ Parameters:
 | submitOnBlur    | bool   | no       | If`true`is passed the form will be submitted when field loses focus.                                                                                                                                               |
 | validation      | func   | no       | Used to validate input. **Important**: Like`asyncValidation`, need to return a string (if invalid) or null / undefined (if valid).                                                                                 |
 
-Return values:
+Returns an object with properties:
+
+| Name           | Type                   | Description                                                                                                                                                                                                  |
+| -------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| error          | string / null          | Error message to control field input feedback. string (if invalid) or null / undefined (if valid)                                                                                                            |
+| ffHandler      | object                 | Form handler ref to treat exceptions if needed                                                                                                                                                               |
+| formDisabled   | bool                   | Control boolean if the form is disabled. **Suggestion of use**: Block user action with the field                                                                                                             |
+| formLoading    | bool                   | Control boolean if the field is loading (with async validations). **Suggestion of use**: Block user action with the field and show visual loading feedback                                                   |
+| onBlur         | func                   | Controls `onBlur` treatments on fields that use this listener. Needs to be passed as props for the field: `onBlur={onBlur}`                                                                                  |
+| onChange       | func                   | Controls the change of field value. receives the event change as the first parameter and the new value as the second. the event is not used internally, it is passed on for external use only, if necessary. |
+| onSubmit       | func                   | Controls the submission of the form from an action in the field: `onKeyPress={onSubmit}` (React JS) or `onSubmitEditing={onSubmit}` (React Native)                                                           |
+| ref            | React.MutableRefObject | React ref to control field focus when get validation error                                                                                                                                                   |
+| testFieldError | func                   | Function to call field validation. **Important**: Used only when the field does not have the `onBlur` listener                                                                                               |
+| valid          | bool                   | Controls whether the field is valid. Used to provide visual feedback when the field is filled in correctly                                                                                                   |
+| value          | any                    | Value saved in the form. Example: `value={value}`                                                                                                                                                            |
+
+### useFormFull.button
+
+Hook used to connect a **button** component to be controlled by `form-full`
+
+Receives an object as a parameter with the properties:
+
+| Name       | Type          | Required | Description                                                                                                                                                                                                                                                                                                                       |
+| ---------- | ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| actionType | string / null | no       | Defines what type of action the button will perform when clicked. Possible values: `submit` (calls FormFull's onSubmit), `clear` (clear all field values) and `clearDefault` (clear all values to default values). If none is passed it will not take any action, it is necessary to pass an `onClick` for it to have some action |
+| onClick    | func          | no       | Function that will be called when the button is clicked. It is necessary to pass to `useFormFull.button` and not use it directly in the button rendered                                                                                                                                                                           |
+| name       | string        | `yes`    | Button name to be managed by the form.                                                                                                                                                                                                                                                                                            |
+
+Returns an object with properties:
+
+| Name         | Type   | Description                                                                                                                                                |
+| ------------ | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ffHandler    | object | Form handler ref to treat exceptions if needed                                                                                                             |
+| formDisabled | bool   | Control boolean if the form is disabled. **Suggestion of use**: Block user action with the button                                                          |
+| formLoading  | bool   | Control boolean if the form is loading (with async validations). **Suggestion of use**: Block user action with the button and show visual loading feedback |
+| onClick      | func   | Controls `onClick` treatments on button. Needs to be passed as props for the button: `onClick={onClick}` (React JS) or `onPress={onClick}` (React Native)  |
