@@ -26,9 +26,9 @@ React component that must encompass the entire form that will manage
 [Handler Methods documentation](#custom_anchor_name) _// In process of development_
 Class that manages all form behavior (Accessible by saving with the `formRef` of the `FormFull` component or in calls like `onChange` and `onBlur` of the input or field validations (`validation` or `asyncValidation`).
 
-[useFormFull.field documentation](#useFormFull.field)
+[useFormFull.field documentation](#use-formfull-field)
 Hook that will connect a new value input component (`TextField`, `RadioButton`, `Checkbox`... and everything else your project needs to use in the form)
-[useFormFull.button documentation](#useFormFull.button)
+[useFormFull.button documentation](#use-formfull-button)
 Hook that will connect a new action component (`Buttons` and components that use `onClick` and need to interact with the form)
 
 You can preview using the form and how to create `form-full` components in this interactive demo:
@@ -224,8 +224,9 @@ export default React.memo(Button);
 | onChange      | func      | no       | Function called when the value of any field changes                                                                                                                                                                                     |
 | submitOnClear | bool      | no       | If `true` is passed, the function `onSubmit` will be called when the form is cleared. \*\*Only works if all fields are optional                                                                                                         |
 
-### useFormFull.field
+### Use FormFull Field
 
+`useFormFull.field`
 Hook used to connect a **field** component to be controlled by `form-full`
 
 Receives an object as a parameter with the properties:
@@ -262,8 +263,9 @@ Returns an object with properties:
 | valid          | bool                   | Controls whether the field is valid. Used to provide visual feedback when the field is filled in correctly                                                                                                   |
 | value          | any                    | Value saved in the form. Example: `value={value}`                                                                                                                                                            |
 
-### useFormFull.button
+### Use FormFull Button
 
+`useFormFull.button`
 Hook used to connect a **button** component to be controlled by `form-full`
 
 Receives an object as a parameter with the properties:
