@@ -20,6 +20,8 @@ yarn add form-full
 
 First, it is important to understand how each part interacts with the other.
 
+There are four main parts which are as follows:
+
 [FormFull documentation](#formfull)
 React component that must encompass the entire form that will manage
 
@@ -28,6 +30,7 @@ Class that manages all form behavior (Accessible by saving with the `formRef` of
 
 [useFormFull.field documentation](#use-formfull-field)
 Hook that will connect a new value input component (`TextField`, `RadioButton`, `Checkbox`... and everything else your project needs to use in the form)
+
 [useFormFull.button documentation](#use-formfull-button)
 Hook that will connect a new action component (`Buttons` and components that use `onClick` and need to interact with the form)
 
