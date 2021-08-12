@@ -3,7 +3,6 @@ import {
   DisableHandlerType,
   ErrorHandlerType,
   ErrorMessageType,
-  FieldActionType,
   FieldRef,
   FieldValueType,
   FieldHandlerParams,
@@ -25,9 +24,6 @@ class FieldHandler {
   label?: string;
   required: ErrorMessageType;
 
-  actionType: any;
-  isFileValue?: boolean;
-
   mask: MaskType;
   maskToSubmit: MaskToSubmitType;
   validation: ValidationType;
@@ -48,8 +44,6 @@ class FieldHandler {
     defaultValue,
     label,
     required,
-    actionType,
-    isFileValue,
     mask,
     maskToSubmit,
     validation,
@@ -65,8 +59,6 @@ class FieldHandler {
     this.defaultValue = defaultValue;
     this.label = label;
     this.required = required;
-    this.actionType = actionType;
-    this.isFileValue = isFileValue;
     this.mask = mask;
     this.maskToSubmit = maskToSubmit;
     this.validation = validation;
@@ -95,14 +87,6 @@ class FieldHandler {
     this.label = label;
   };
 
-  setType = (actionType: FieldActionType): void => {
-    this.actionType = actionType;
-  };
-
-  setIsFileValue = (isFileValue: boolean): void => {
-    this.isFileValue = isFileValue;
-  };
-
   setMask = (mask: MaskType): void => {
     this.mask = mask;
   };
@@ -120,25 +104,27 @@ class FieldHandler {
   };
 
   setValue = (newValue: FieldValueType): void => {
-    if (this.actionType === "file" && newValue) {
-      this.value = newValue.base64;
-      delete newValue.base64;
-      this.valueFile = newValue;
-    } else {
-      this.value = newValue;
-    }
+    this.value = newValue;
   };
 
   getRef = (): FieldRef => {
     return this.ref;
   };
 
-  clearValue = (): void => {
+  private _clearValue = (): void => {
     this.handleValue("");
   };
 
-  setValueToDefault = (): void => {
+  private _setValueToDefault = (): void => {
     this.handleValue(this.defaultValue);
+  };
+
+  clearValue = (setDefault: boolean): void => {
+    if (setDefault) {
+      this._setValueToDefault();
+    } else {
+      this._clearValue();
+    }
   };
 
   getFormatedValueToSubmit = (ffHandler: FormFullHandler): any => {

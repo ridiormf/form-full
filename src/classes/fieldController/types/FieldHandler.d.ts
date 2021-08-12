@@ -1,8 +1,6 @@
 import React from "react";
 import FormFullHandler from "../../FormFullHandler";
 
-export type FieldActionType = "file" | undefined;
-
 export type FieldValueType = any;
 export type ErrorMessageType = string | null | undefined;
 export type MaskType = ((value: FieldValueType) => any) | undefined;
@@ -33,13 +31,9 @@ export type DisableHandlerType = React.Dispatch<React.SetStateAction<boolean>>;
 export type FieldHandlerParams = {
   value?: FieldValueType;
   defaultValue?: FieldValueType;
-  valueFile?: File;
 
   label?: string;
   required?: ErrorMessageType;
-
-  actionType?: FieldActionType;
-  isFileValue?: boolean;
 
   mask: MaskType;
   maskToSubmit: MaskToSubmitType;

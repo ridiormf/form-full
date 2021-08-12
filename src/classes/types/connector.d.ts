@@ -9,7 +9,7 @@ export type FieldConnectorReturnType = {
   value: FieldValueType;
   error: ErrorMessageType;
   valid: boolean;
-  validationLoading: boolean;
+  formLoading: boolean;
   formDisabled: boolean;
   onSubmit: (event: any) => void;
   onBlur: (event: any) => void;

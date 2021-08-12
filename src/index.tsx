@@ -20,7 +20,6 @@ export type {
 } from "./classes/fieldController/types/Field";
 
 export type {
-  FieldActionType,
   FieldValueType,
   ErrorMessageType,
   MaskType,

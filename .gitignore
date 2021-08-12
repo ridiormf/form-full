@@ -1,5 +1,5 @@
-/lib-test/node_modules
-/lib-test/build
+/test/node_modules
+/test/build
 /node_modules
 /lib
 

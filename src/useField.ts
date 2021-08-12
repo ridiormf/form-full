@@ -23,7 +23,7 @@ export default function useField(
   const initialValue = getInitialStringValue();
 
   const [value, setStateValue] = React.useState(initialValue);
-  const [validationLoading, setValidationLoading] = React.useState(false);
+  const [formLoading, setFormLoading] = React.useState(false);
   const [error, setError] = React.useState<ErrorMessageType>("");
   const [valid, setValid] = React.useState(false);
   const ref = React.useRef<FieldRef>();
@@ -83,10 +83,8 @@ export default function useField(
       errorHandler: setError,
       validHandler: setValid,
       handleValue: (value) => onChange(null, value),
-      setLoading: setValidationLoading,
+      setLoading: setFormLoading,
       value,
-      actionType: props.actionType,
-      isFileValue: props.isFileValue,
       label: props.label ?? props.placeholder,
       defaultValue: props.defaultValue,
       mask: props.mask,
@@ -117,7 +115,7 @@ export default function useField(
     value,
     error,
     valid,
-    validationLoading,
+    formLoading,
     formDisabled,
     onSubmit,
     onBlur,
