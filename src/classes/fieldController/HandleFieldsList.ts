@@ -18,43 +18,39 @@ class HandleFieldsList {
   fieldNames: Array<string> = [];
   actualValues: ActualValuesType = {};
 
-  static invalidNameError(name: string): void {
+  private invalidNameError(name: string): void {
     throw new Error(
       `The "form-full" field expects to receive the "name" property as a string, but it received a "${typeof name}".`
     );
   }
 
-  static fieldAlreadyExist(name: string): void {
+  private fieldAlreadyExist(name: string): void {
     throw new Error(`The field "${name}" has already been created.`);
   }
 
-  static cantDeleteField(name: string): void {
-    throw new Error(`The field "${name}" doesn't exist and cannot be removed.`);
-  }
-
-  static cantGetField(name: string): void {
+  private cantGetField(name: string): void {
     throw new Error(
       `The field "${name}" doesn't exist and cannot be used/modified.`
     );
   }
 
-  static treatUpdateField = (
+  private treatUpdateField = (
     name: string,
     formFields: Fields,
     callback: () => any
   ) => {
     if (typeof name !== "string") {
-      HandleFieldsList.invalidNameError(name);
+      this.invalidNameError(name);
     } else if (formFields[name]) {
       return callback();
     } else {
-      HandleFieldsList.cantGetField(name);
+      this.cantGetField(name);
     }
   };
 
   setNewField = (name: string, fieldParams: FieldHandlerParams): void => {
     if (typeof name !== "string") {
-      HandleFieldsList.invalidNameError(name);
+      this.invalidNameError(name);
     } else if (!this.formFields[name]) {
       this.fieldNames.push(name);
       this.formFields[name] = new FieldHandler(fieldParams);
@@ -63,12 +59,12 @@ class HandleFieldsList {
         this.setValue(name, this.actualValues[name]);
       }
     } else {
-      HandleFieldsList.fieldAlreadyExist(name);
+      this.fieldAlreadyExist(name);
     }
   };
 
   removeField = (name: string): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
+    this.treatUpdateField(name, this.formFields, () => {
       delete this.formFields[name];
       const nameIndex = this.fieldNames.indexOf(name);
       this.fieldNames.splice(nameIndex, 1);
@@ -95,24 +91,24 @@ class HandleFieldsList {
   };
 
   setFieldRequired = (name: string, required: ErrorMessageType): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
+    this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setRequired(required);
     });
   };
 
   setFieldDefaultValue = (name: string, defaultValue: FieldValueType): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
+    this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setDefaultValue(defaultValue);
     });
   };
   setFieldLabel = (name: string, label: string): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
+    this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setLabel(label);
     });
   };
 
   setFieldMask = (name: string, mask: MaskType): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
+    this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setMask(mask);
     });
   };
@@ -120,12 +116,12 @@ class HandleFieldsList {
     name: string,
     maskToSubmit: MaskToSubmitType
   ): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
+    this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setMaskToSubmit(maskToSubmit);
     });
   };
   setFieldValidation = (name: string, validation: ValidationType): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
+    this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setValidation(validation);
     });
   };
@@ -134,25 +130,25 @@ class HandleFieldsList {
     name: string,
     asyncValidation: AsyncValidationType
   ): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
+    this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setAsyncValidation(asyncValidation);
     });
   };
 
   getFieldRef = (name: string): FieldRef => {
-    return HandleFieldsList.treatUpdateField(name, this.formFields, () => {
+    return this.treatUpdateField(name, this.formFields, () => {
       return this.formFields[name].getRef();
     });
   };
 
   setValue = (name: string, value: FieldValueType): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
+    this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].handleValue(value);
     });
   };
 
   setFormValue = (name: string, value: FieldValueType): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
+    this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setValue(value);
     });
   };
@@ -168,7 +164,7 @@ class HandleFieldsList {
   };
 
   clearValue = (name: string, setDefault: boolean): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
+    this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].clearValue(setDefault);
     });
   };
@@ -202,7 +198,7 @@ class HandleFieldsList {
     name: string,
     withMaskToSubmit: boolean,
     ffHandler: FormFullHandler
-  ): any => {
+  ): FieldValueType => {
     if (this.formFields[name]) {
       return withMaskToSubmit
         ? this._getFinalValue(name, ffHandler)
@@ -268,13 +264,9 @@ class HandleFieldsList {
     shouldUpdateInput: boolean,
     ffHandler: FormFullHandler
   ): Promise<ErrorMessageType> => {
-    return await HandleFieldsList.treatUpdateField(
-      name,
-      this.formFields,
-      () => {
-        return this.formFields[name].validate(shouldUpdateInput, ffHandler);
-      }
-    );
+    return await this.treatUpdateField(name, this.formFields, () => {
+      return this.formFields[name].validate(shouldUpdateInput, ffHandler);
+    });
   };
 
   testErrorsAndReturnData = async (
@@ -289,7 +281,7 @@ class HandleFieldsList {
 
     await Promise.all(
       this.fieldNames.map(async (name) => {
-        data[name] = await this._testErrorAndReturnData(
+        const value = await this._testErrorAndReturnData(
           name,
           ffHandler,
           concatErrorMessages,
@@ -300,23 +292,14 @@ class HandleFieldsList {
             }
           }
         );
+        if (value !== undefined) {
+          data[name] = value;
+        }
 
         return null;
       })
     );
     return { hasError, data };
-  };
-
-  setCustomError = (name: string, message: ErrorMessageType): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
-      this.formFields[name].errorHandler(message);
-    });
-  };
-
-  setCustomValid = (name: string, valid: boolean): void => {
-    HandleFieldsList.treatUpdateField(name, this.formFields, () => {
-      this.formFields[name].validHandler(valid);
-    });
   };
 }
 

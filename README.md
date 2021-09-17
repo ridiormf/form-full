@@ -25,14 +25,14 @@ There are four main parts which are as follows:
 [FormFull documentation](#formfull)
 React component that must encompass the entire form that will manage
 
-[Handler Methods documentation](#custom_anchor_name) _// In process of development_
-Class that manages all form behavior (Accessible by saving with the `formRef` of the `FormFull` component or in calls like `onChange` and `onBlur` of the input or field validations (`validation` or `asyncValidation`).
-
 [useFormFull.field documentation](#use-formfull-field)
 Hook that will connect a new value input component (`TextField`, `RadioButton`, `Checkbox`... and everything else your project needs to use in the form)
 
 [useFormFull.button documentation](#use-formfull-button)
 Hook that will connect a new action component (`Buttons` and components that use `onClick` and need to interact with the form)
+
+[Handler Methods documentation](#custom_anchor_name) _// In process of development_
+Class that manages all form behavior (Accessible by saving with the `formRef` of the `FormFull` component or in calls like `onChange` and `onBlur` of the input or field validations (`validation` or `asyncValidation`).
 
 You can preview using the form and how to create `form-full` components in this interactive demo:
 [![Edit Button](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/tsxir)
@@ -287,3 +287,37 @@ Returns an object with properties:
 | formDisabled | bool   | Control boolean if the form is disabled. **Suggestion of use**: Block user action with the button                                                          |
 | formLoading  | bool   | Control boolean if the form is loading (with async validations). **Suggestion of use**: Block user action with the button and show visual loading feedback |
 | onClick      | func   | Controls `onClick` treatments on button. Needs to be passed as props for the button: `onClick={onClick}` (React JS) or `onPress={onClick}` (React Native)  |
+
+### Handler Methods
+
+| Method Name             | Params                                              | Return                                                          | Description |
+| ----------------------- | --------------------------------------------------- | --------------------------------------------------------------- | ----------- |
+| clearFields             | (setDefault: boolean = true)                        | void                                                            | //TODO      |
+| clearSpecificFields     | (names: Array<string>, setDefault: boolean = true)  | void                                                            | //TODO      |
+| clearValue              | (name: string, setDefault: bool = true)             | void                                                            | //TODO      |
+| getActualValue          | (name: string)                                      | any                                                             | //TODO      |
+| getDisabledForm         |                                                     | bool                                                            | //TODO      |
+| getFieldRef             |                                                     | React.MutableRefObject / null                                   | //TODO      |
+| getValidValues          | (valuesWithMaskToSubmit: boolean)                   | Object<[name: string]: any>                                     | //TODO      |
+| getValue                | (name: string, withMaskToSubmit: boolean)           | void                                                            | //TODO      |
+| getValues               |                                                     | Object<[name: string]: any>                                     | //TODO      |
+| removeButton            | (name: string)                                      | void                                                            | //TODO      |
+| removeField             | (name: string)                                      | void                                                            | //TODO      |
+| setActualValues         | (actualValues: Object<[name: string]: any>)         | void                                                            | //TODO      |
+| setAllDisabled          | (disabled: boolean)                                 | void                                                            | //TODO      |
+| setDisabled             | (disabled: boolean)                                 | void                                                            | //TODO      |
+| setFieldAsyncValidation | (name: string, asyncValidation: func)               | void                                                            | //TODO      |
+| setFieldDefaultValue    | (name: string, defaultValue: any)                   | void                                                            | //TODO      |
+| setFieldFocus           | (name: string)                                      | void                                                            | //TODO      |
+| setFieldLabel           | (name: string, label: string)                       | void                                                            | //TODO      |
+| setFieldMask            | (name: string, mask: func)                          | void                                                            | //TODO      |
+| setFieldMaskToSubmit    | (name: string, maskToSubmit: func)                  | void                                                            | //TODO      |
+| setFieldRequired        | (name: string, required: string / null / undefined) | void                                                            | //TODO      |
+| setFieldValidation      | (name: string, asyncValidation: func)               | void                                                            | //TODO      |
+| setFormValue            | (name: string, value: any)                          | void                                                            | //TODO      |
+| setNewButton            | (name: string, buttonParams: Object<params>)        | void                                                            | //TODO      |
+| setNewField             | (name: string, buttonParams: Object<params>)        | void                                                            | //TODO      |
+| setValue                | (name: string, value: any)                          | void                                                            | //TODO      |
+| submit                  |                                                     | Promise<void>                                                   | //TODO      |
+| testErrorsAndReturnData |                                                     | Promise<{hasError: boolean;data: Object<[name: string]: any>;}> | //TODO      |
+| testFieldError          | (name: string, shouldUpdateInput: boolean = true)   | Promise<string / null / undefined>                              | //TODO      |

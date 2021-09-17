@@ -134,7 +134,7 @@ export default class FormFullHandler {
     this.formFieldsHandler.clearValue(name, setDefault);
   };
 
-  getValue = (name: string, withMaskToSubmit: boolean): void => {
+  getValue = (name: string, withMaskToSubmit: boolean): FieldValueType => {
     return this.formFieldsHandler.getValue(name, withMaskToSubmit, this);
   };
 
@@ -150,8 +150,8 @@ export default class FormFullHandler {
     this.formFieldsHandler.setFieldFocus(name);
   };
 
-  getValidValues = (valuesWithMaskToSubmit: boolean): void => {
-    this.formFieldsHandler.getValidValues(valuesWithMaskToSubmit, this);
+  getValidValues = (valuesWithMaskToSubmit: boolean): FFDataReturnType => {
+    return this.formFieldsHandler.getValidValues(valuesWithMaskToSubmit, this);
   };
 
   testErrorsAndReturnData = async (): Promise<{
@@ -173,7 +173,10 @@ export default class FormFullHandler {
     }
   };
 
-  testFieldError = async (name: string, shouldUpdateInput: boolean = true) => {
+  testFieldError = async (
+    name: string,
+    shouldUpdateInput: boolean = true
+  ): Promise<ErrorMessageType> => {
     return await this.formFieldsHandler.testFieldError(
       name,
       shouldUpdateInput,
@@ -190,14 +193,6 @@ export default class FormFullHandler {
 
   clearSpecificFields = (names: Array<string>, setDefault: boolean = true) => {
     this.formFieldsHandler.clearSpecificFields(names, setDefault);
-  };
-
-  setCustomError = (name: string, message: ErrorMessageType) => {
-    this.formFieldsHandler.setCustomError(name, message);
-  };
-
-  setCustomValid = (name: string, valid: boolean) => {
-    this.formFieldsHandler.setCustomValid(name, valid);
   };
 
   submit = async (): Promise<void> => {
