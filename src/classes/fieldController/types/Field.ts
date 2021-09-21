@@ -1,5 +1,12 @@
 import FormFullHandler from "../../FormFullHandler";
-import { FieldValueType } from "./FieldHandler";
+import {
+  AsyncValidationType,
+  ErrorMessageType,
+  FieldValueType,
+  MaskToSubmitType,
+  MaskType,
+  ValidationType,
+} from "./FieldHandler";
 
 export type FieldFormListener = (
   event: any,
@@ -14,4 +21,14 @@ export type FieldProps = {
   onBlur?: FieldFormListener;
   placeholder?: string;
   submitOnBlur?: boolean;
+
+  defaultValue?: FieldValueType;
+
+  label?: string;
+  required?: ErrorMessageType;
+
+  mask?: MaskType;
+  maskToSubmit?: MaskToSubmitType;
+  validation?: ValidationType;
+  asyncValidation?: AsyncValidationType;
 };
