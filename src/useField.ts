@@ -6,13 +6,10 @@ import {
   ErrorMessageType,
   FieldRef,
   FieldValueType,
-  FieldHandlerParams,
 } from "./classes/fieldController/types/FieldHandler";
 import { FieldConnectorReturnType } from "./classes/types/connector";
 
-export default function useField(
-  props: FieldProps & FieldHandlerParams
-): FieldConnectorReturnType {
+export default function useField(props: FieldProps): FieldConnectorReturnType {
   const getInitialStringValue = React.useCallback((): FieldValueType => {
     const { defaultValue = "", mask } = props;
     const value = defaultValue;
