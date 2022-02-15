@@ -1,21 +1,21 @@
 import React, { StrictMode } from "react";
 import ReactDOM from "react-dom";
 import { sleep } from "./utils/sleep";
-import { ActualValuesType, FormFull } from "form-full";
+import { CurrentValuesType, FormFull } from "form-full";
 import "./styles.css";
 import Input from "./forms/InputComponent";
 import Button from "./forms/ButtonComponent";
 import { FFDataReturnType } from "form-full";
 
 export default function App() {
-  const [actualValues, setActualValues] =
-    React.useState<ActualValuesType | null>({});
+  const [currentValues, setCurrentValues] =
+    React.useState<CurrentValuesType | null>({});
   const [savedValues, setSavedValues] = React.useState<FFDataReturnType>();
 
   function simulateRequest() {
-    setActualValues(null);
+    setCurrentValues(null);
     sleep(2000).then(() => {
-      setActualValues({
+      setCurrentValues({
         name: "Form Full",
         age: "18",
       });
@@ -26,8 +26,8 @@ export default function App() {
     <div className="App">
       <div className="form-container">
         <FormFull
-          disabled={!actualValues}
-          actualValues={actualValues ?? {}}
+          disabled={!currentValues}
+          currentValues={currentValues ?? {}}
           onSubmit={(data: FFDataReturnType) => {
             setSavedValues(data);
           }}

@@ -1,4 +1,4 @@
-import { ActualValuesType } from "../fieldController/types/HandleFieldsList";
+import { CurrentValuesType } from "../fieldController/types/HandleFieldsList";
 import { FFOnChangeType, FFOnSubmitType } from "./FormFullHandler";
 
 export type FormFullProps = {
@@ -8,6 +8,6 @@ export type FormFullProps = {
   onChange?: FFOnChangeType;
   formRef?: Function;
   children: React.ReactNode;
-  actualValues?: ActualValuesType;
+  currentValues?: CurrentValuesType;
   disabled?: boolean;
 };

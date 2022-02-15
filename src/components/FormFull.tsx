@@ -18,8 +18,8 @@ function FormFull(props: FormFullProps): JSX.Element {
       disabled: props.disabled,
     });
 
-    if (props.actualValues) {
-      ffHandler.current.setActualValues(props.actualValues);
+    if (props.currentValues) {
+      ffHandler.current.setCurrentValues(props.currentValues);
     }
     if (props.disabled) {
       ffHandler.current.setDisabled(props.disabled);
@@ -31,8 +31,8 @@ function FormFull(props: FormFullProps): JSX.Element {
   });
 
   React.useEffect(() => {
-    ffHandler.current?.setActualValues(props.actualValues ?? {});
-  }, [props.actualValues]);
+    ffHandler.current?.setCurrentValues(props.currentValues ?? {});
+  }, [props.currentValues]);
 
   React.useEffect(() => {
     ffHandler.current?.setAllDisabled(props.disabled ?? false);

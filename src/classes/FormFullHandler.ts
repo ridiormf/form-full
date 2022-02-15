@@ -16,7 +16,7 @@ import {
   FFDataReturnType,
   FormFullHandlerParams,
 } from "./types/FormFullHandler";
-import { ActualValuesType } from "./fieldController/types/HandleFieldsList";
+import { CurrentValuesType } from "./fieldController/types/HandleFieldsList";
 
 export default class FormFullHandler {
   onSubmit;
@@ -69,8 +69,8 @@ export default class FormFullHandler {
     this.formButtonsHandler.removeButton(name);
   };
 
-  setActualValues = (actualValues: ActualValuesType): void => {
-    this.formFieldsHandler.setActualValues(actualValues);
+  setCurrentValues = (currentValues: CurrentValuesType): void => {
+    this.formFieldsHandler.setCurrentValues(currentValues);
   };
 
   setDisabled = (disabled: boolean): void => {

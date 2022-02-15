@@ -32,4 +32,4 @@ export type {
   FieldHandlerParams,
 } from "./classes/fieldController/types/FieldHandler";
 
-export type { ActualValuesType } from "./classes/fieldController/types/HandleFieldsList";
+export type { CurrentValuesType } from "./classes/fieldController/types/HandleFieldsList";

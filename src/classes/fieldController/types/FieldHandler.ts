@@ -28,7 +28,12 @@ export type HandleValueType = React.Dispatch<
 export type SetLoadingType = React.Dispatch<React.SetStateAction<boolean>>;
 export type DisableHandlerType = React.Dispatch<React.SetStateAction<boolean>>;
 
-export type FieldHandlerParams = {
+export type OnFieldChange = (
+  event: any | undefined | null,
+  value: FieldValueType
+) => void;
+
+export interface FieldHandlerParams {
   value?: FieldValueType;
   defaultValue?: FieldValueType;
 
@@ -47,4 +52,4 @@ export type FieldHandlerParams = {
   disableHandler: DisableHandlerType;
 
   ref: FieldRef;
-};
+}

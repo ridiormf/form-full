@@ -2,10 +2,11 @@ import {
   ErrorMessageType,
   FieldRef,
   FieldValueType,
+  OnFieldChange,
 } from "../fieldController/types/FieldHandler";
 import FormFullHandler from "../FormFullHandler";
 
-export type FieldConnectorReturnType = {
+export interface FieldConnectorReturnType {
   value: FieldValueType;
   error: ErrorMessageType;
   valid: boolean;
@@ -13,15 +14,15 @@ export type FieldConnectorReturnType = {
   formDisabled: boolean;
   onSubmit: (event: any) => void;
   onBlur: (event: any) => void;
-  onChange: (event: any | undefined | null, value: FieldValueType) => void;
+  onChange: OnFieldChange;
   testFieldError: () => void;
   ref: FieldRef;
   ffHandler: FormFullHandler | undefined;
-};
+}
 
-export type ButtonConnectorReturnType = {
+export interface ButtonConnectorReturnType {
   onClick: (event: any) => void;
   ffHandler: FormFullHandler | undefined;
   formDisabled: boolean;
   formLoading: boolean;
-};
+}

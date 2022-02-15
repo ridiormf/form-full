@@ -10,13 +10,13 @@ import {
   ValidationType,
 } from "./types/FieldHandler";
 import { FFDataReturnType } from "../types/FormFullHandler";
-import { ActualValuesType, Fields } from "./types/HandleFieldsList";
+import { CurrentValuesType, Fields } from "./types/HandleFieldsList";
 import { FieldHandler } from "./FieldHandler";
 
 class HandleFieldsList {
   formFields: Fields = {};
   fieldNames: Array<string> = [];
-  actualValues: ActualValuesType = {};
+  currentValues: CurrentValuesType = {};
 
   private invalidNameError(name: string): void {
     throw new Error(
@@ -55,8 +55,8 @@ class HandleFieldsList {
       this.fieldNames.push(name);
       this.formFields[name] = new FieldHandler(fieldParams);
 
-      if (this.actualValues[name]) {
-        this.setValue(name, this.actualValues[name]);
+      if (this.currentValues[name]) {
+        this.setValue(name, this.currentValues[name]);
       }
     } else {
       this.fieldAlreadyExist(name);
@@ -71,16 +71,16 @@ class HandleFieldsList {
     });
   };
 
-  setActualValues = (actualValues: ActualValuesType): void => {
-    if (actualValues) {
+  setCurrentValues = (currentValues: CurrentValuesType): void => {
+    if (currentValues) {
       this.fieldNames.forEach((name) => {
-        if (actualValues[name] !== this.actualValues[name]) {
-          this.setValue(name, actualValues[name] ?? "");
+        if (currentValues[name] !== this.currentValues[name]) {
+          this.setValue(name, currentValues[name] ?? "");
         }
       });
-      this.actualValues = actualValues;
+      this.currentValues = currentValues;
     } else {
-      this.actualValues = {};
+      this.currentValues = {};
     }
   };
 
@@ -207,7 +207,7 @@ class HandleFieldsList {
   };
 
   getActualValue = (name: string): FieldValueType => {
-    return this.actualValues[name];
+    return this.currentValues[name];
   };
 
   getValues = (ffHandler: FormFullHandler): FFDataReturnType => {

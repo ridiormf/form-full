@@ -1,7 +1,7 @@
 import { FieldHandler } from "../FieldHandler";
 import { FieldValueType } from "./FieldHandler";
 
-export interface ActualValuesType {
+export interface CurrentValuesType {
   [name: string]: FieldValueType;
 }
 

@@ -48,13 +48,13 @@ import Input from "./fields/Input";
 import Button from "./buttons/Button";
 
 export default function App() {
-  const [actualValues, setActualValues] = React.useState({});
+  const [currentValues, setCurrentValues] = React.useState({});
   const [savedValues, setSavedValues] = React.useState();
 
   function simulateRequest() {
-    setActualValues(null);
+    setCurrentValues(null);
     sleep(2000).then(() => {
-      setActualValues({
+      setCurrentValues({
         name: "Form Full",
         age: "18",
       });
@@ -65,8 +65,8 @@ export default function App() {
     <div className="App">
       <div className="form-container">
         <FormFull
-          disabled={!actualValues}
-          actualValues={actualValues}
+          disabled={!currentValues}
+          currentValues={currentValues}
           onSubmit={(data) => {
             console.log({ data });
             setSavedValues(data);
@@ -216,16 +216,16 @@ export default React.memo(Button);
 
 `props` passed to the component that manages the form:
 
-| Name          | Type      | Required | Description                                                                                                                                                                                                                             |
-| ------------- | --------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| actualValues  | object    | no       | Object that defines the current values ​​of each field in the form. example: `{ username: "form", password: "full123" }`. **important**: Values ​​will only be inserted into the field if they change from the previous `actualValues`. |
-| children      | ReactNode | `yes`    | Rendered components. All fields and buttons on the form must be children of the `FormFull` component                                                                                                                                    |
-| clearOnSubmit | bool      | no       | If `true` is passed, the fields will be cleared (or filled in by default) when submitting the form                                                                                                                                      |
-| disabled      | bool      | no       | If `true` is passed, all fields will be disabled                                                                                                                                                                                        |
-| formRef       | func      | no       | Function to get the class that manages the form, normally used to handle exceptions and others advanced treatments                                                                                                                      |
-| onSubmit      | func      | `yes`    | Function called when the form is submitted, receiving the values ​​in a object `{ key: value }`                                                                                                                                         |
-| onChange      | func      | no       | Function called when the value of any field changes                                                                                                                                                                                     |
-| submitOnClear | bool      | no       | If `true` is passed, the function `onSubmit` will be called when the form is cleared. \*\*Only works if all fields are optional                                                                                                         |
+| Name          | Type      | Required | Description                                                                                                                                                                                                                              |
+| ------------- | --------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| currentValues | object    | no       | Object that defines the current values ​​of each field in the form. example: `{ username: "form", password: "full123" }`. **important**: Values ​​will only be inserted into the field if they change from the previous `currentValues`. |
+| children      | ReactNode | `yes`    | Rendered components. All fields and buttons on the form must be children of the `FormFull` component                                                                                                                                     |
+| clearOnSubmit | bool      | no       | If `true` is passed, the fields will be cleared (or filled in by default) when submitting the form                                                                                                                                       |
+| disabled      | bool      | no       | If `true` is passed, all fields will be disabled                                                                                                                                                                                         |
+| formRef       | func      | no       | Function to get the class that manages the form, normally used to handle exceptions and others advanced treatments                                                                                                                       |
+| onSubmit      | func      | `yes`    | Function called when the form is submitted, receiving the values ​​in a object `{ key: value }`                                                                                                                                          |
+| onChange      | func      | no       | Function called when the value of any field changes                                                                                                                                                                                      |
+| submitOnClear | bool      | no       | If `true` is passed, the function `onSubmit` will be called when the form is cleared. \*\*Only works if all fields are optional                                                                                                          |
 
 ### Use FormFull Field
 
@@ -303,7 +303,7 @@ Returns an object with properties:
 | getValues               |                                                     | Object<[name: string]: any>                                     | //TODO      |
 | removeButton            | (name: string)                                      | void                                                            | //TODO      |
 | removeField             | (name: string)                                      | void                                                            | //TODO      |
-| setActualValues         | (actualValues: Object<[name: string]: any>)         | void                                                            | //TODO      |
+| setCurrentValues        | (currentValues: Object<[name: string]: any>)        | void                                                            | //TODO      |
 | setAllDisabled          | (disabled: boolean)                                 | void                                                            | //TODO      |
 | setDisabled             | (disabled: boolean)                                 | void                                                            | //TODO      |
 | setFieldAsyncValidation | (name: string, asyncValidation: func)               | void                                                            | //TODO      |
