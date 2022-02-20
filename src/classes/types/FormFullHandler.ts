@@ -3,7 +3,7 @@ import {
   FieldValueType,
 } from "../fieldController/types/FieldHandler";
 
-export type FFOnSubmitType = (ffData: FFDataReturnType) => void;
+export type FFOnSubmitType = <T>(ffData: T | FieldValueType) => void;
 export type FFOnChangeType = () => void;
 
 export interface FFDataReturnType {

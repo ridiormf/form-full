@@ -5,7 +5,7 @@ export type SetLoadingType = React.Dispatch<React.SetStateAction<boolean>>;
 export type SetDisabledType = React.Dispatch<React.SetStateAction<boolean>>;
 
 export type ButtonHandlerParams = {
-  actionType: ButtonActionType;
+  actionType?: ButtonActionType;
   setLoading: SetLoadingType;
   setDisabled: SetDisabledType;
 };
