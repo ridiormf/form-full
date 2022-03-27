@@ -2,27 +2,24 @@ import FormFullHandler from "../../FormFullHandler";
 import {
   AsyncValidationType,
   ErrorMessageType,
-  FieldValueType,
   MaskToSubmitType,
   MaskType,
   ValidationType,
 } from "./FieldHandler";
 
-export type FieldFormListener = (
-  event: any,
-  value?: FieldValueType,
-  ffHandler?: FormFullHandler
-) => void;
-
-export type FieldProps = {
+export type FieldProps<T> = {
   name: string;
   maxLength?: number;
-  onChange?: FieldFormListener;
-  onBlur?: FieldFormListener;
+  onChange?: (
+    value: unknown,
+    ffHandler: FormFullHandler<T>,
+    event?: any,
+  ) => void;
+  onBlur?: (value: unknown, ffHandler: FormFullHandler<T>, event?: any) => void;
   placeholder?: string;
   submitOnBlur?: boolean;
 
-  defaultValue?: FieldValueType;
+  defaultValue?: any;
 
   label?: string;
   required?: ErrorMessageType;

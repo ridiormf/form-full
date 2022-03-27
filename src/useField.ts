@@ -5,12 +5,14 @@ import { FieldProps } from "./classes/fieldController/types/Field";
 import {
   ErrorMessageType,
   FieldRef,
-  FieldValueType,
 } from "./classes/fieldController/types/FieldHandler";
-import { FieldConnectorReturnType } from "./classes/types/connector";
+import { FieldConnector } from "./classes/types/connector";
+import { FormFullHandler } from ".";
 
-export default function useField(props: FieldProps): FieldConnectorReturnType {
-  const getInitialStringValue = React.useCallback((): FieldValueType => {
+export default function useField<FormType>(
+  props: FieldProps<FormType>,
+): FieldConnector<FormType> {
+  const getInitialStringValue = React.useCallback((): any => {
     const { defaultValue = "", mask } = props;
     const value = defaultValue;
     const finalValue = mask ? mask(value) : value;
@@ -24,9 +26,9 @@ export default function useField(props: FieldProps): FieldConnectorReturnType {
   const [error, setError] = React.useState<ErrorMessageType>("");
   const [valid, setValid] = React.useState(false);
   const ref = React.useRef<FieldRef>();
-  const ffHandler = React.useContext(FormContext);
+  const ffHandler = React.useContext<FormFullHandler<FormType>>(FormContext);
   const [formDisabled, setFormDisabled] = React.useState<boolean>(
-    !!ffHandler?.getDisabledForm()
+    !!ffHandler?.getDisabledForm(),
   );
 
   const setValueWithoutOnChangeString = React.useCallback(
@@ -41,7 +43,7 @@ export default function useField(props: FieldProps): FieldConnectorReturnType {
       setStateValue(resultedValue);
       setValid(false);
     },
-    [ffHandler, props]
+    [ffHandler, props],
   );
 
   function onBlur(event: any): void {
@@ -52,7 +54,11 @@ export default function useField(props: FieldProps): FieldConnectorReturnType {
         ffHandler?.testFieldError(props.name);
       }
       if (props.onBlur) {
-        props.onBlur(event, value, ffHandler);
+        props.onBlur(
+          value as any,
+          ffHandler as FormFullHandler<FormType>,
+          event,
+        );
       }
     }, 10);
   }
@@ -64,14 +70,18 @@ export default function useField(props: FieldProps): FieldConnectorReturnType {
   }
 
   const onChange = React.useCallback(
-    (event: any | undefined | null, value: FieldValueType = "") => {
+    (event: any | undefined | null, value: any) => {
       setValueWithoutOnChangeString(value);
 
       if (props.onChange) {
-        props.onChange(event, value, ffHandler);
+        props.onChange(
+          value as any,
+          ffHandler as FormFullHandler<FormType>,
+          event as unknown,
+        );
       }
     },
-    [ffHandler, props, setValueWithoutOnChangeString]
+    [ffHandler, props, setValueWithoutOnChangeString],
   );
 
   const mount = React.useCallback(() => {

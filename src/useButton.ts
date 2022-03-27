@@ -3,11 +3,9 @@
 import React from "react";
 import { FormContext } from "./components/FormFull";
 import { ButtonProps } from "./classes/buttonController/types/Button";
-import { ButtonConnectorReturnType } from "./classes/types/connector";
+import { ButtonConnector } from "./classes/types/connector";
 
-export default function useButton(
-  props: ButtonProps
-): ButtonConnectorReturnType {
+export default function useButton<T>(props: ButtonProps): ButtonConnector<T> {
   const [formDisabled, setDisabled] = React.useState(false);
   const [formLoading, setLoading] = React.useState(false);
 
@@ -37,7 +35,7 @@ export default function useButton(
         props.onClick(event);
       }
     },
-    [props, ffHandler]
+    [props, ffHandler],
   );
 
   return { onClick, ffHandler, formDisabled, formLoading };

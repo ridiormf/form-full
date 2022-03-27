@@ -5,12 +5,12 @@ import { CurrentValuesType, FormFull } from "form-full";
 import "./styles.css";
 import Input from "./forms/InputComponent";
 import Button from "./forms/ButtonComponent";
-import { FFDataReturnType } from "form-full";
+import InputCPF from "./forms/InputCPF";
 
 export default function App() {
   const [currentValues, setCurrentValues] =
     React.useState<CurrentValuesType | null>({});
-  const [savedValues, setSavedValues] = React.useState<FFDataReturnType>();
+  const [savedValues, setSavedValues] = React.useState<Partial<FormData>>();
 
   function simulateRequest() {
     setCurrentValues(null);
@@ -22,35 +22,48 @@ export default function App() {
     });
   }
 
+  type FormData = {
+    name: string;
+    age: string;
+    defaultValue: string;
+    submit: string;
+    clear: string;
+    clearDefault: string;
+    simulation: string;
+  };
   return (
-    <div className="App">
-      <div className="form-container">
-        <FormFull
+    <div className='App'>
+      <div className='form-container'>
+        <FormFull<FormData>
           disabled={!currentValues}
           currentValues={currentValues ?? {}}
-          onSubmit={(data: FFDataReturnType) => {
+          onSubmit={(data) => {
             setSavedValues(data);
-          }}
-        >
-          <div className="inputs-container">
-            <Input name="name" label="Your name" required="Required field" />
-            <Input name="age" label="Your age" />
-            <Input
-              name="defaultValue"
-              label="Default Value"
-              defaultValue="Some Default Value"
+          }}>
+          <div className='inputs-container'>
+            <Input name='name' label='Your name' required='Required field' />
+            <Input name='age' label='Your age' />
+            <Input<FormData>
+              name='defaultValue'
+              label='Default Value'
+              defaultValue='Some Default Value'
+            />
+            <InputCPF
+              name='cpf'
+              label='CPF'
+              defaultValue='Some Default Value'
             />
           </div>
-          <Button name="submit" actionType="submit">
+          <Button name='submit' actionType='submit'>
             Submit
           </Button>
-          <Button name="clear" actionType="clear">
+          <Button name='clear' actionType='clear'>
             Clear All Values
           </Button>
-          <Button name="clearDefault" actionType="clearDefault">
+          <Button name='clearDefault' actionType='clearDefault'>
             Set All Values to Default
           </Button>
-          <Button name="simulation" onClick={() => simulateRequest()}>
+          <Button name='simulation' onClick={() => simulateRequest()}>
             Simulate data from API
           </Button>
         </FormFull>
@@ -73,5 +86,5 @@ ReactDOM.render(
   <StrictMode>
     <App />
   </StrictMode>,
-  rootElement
+  rootElement,
 );

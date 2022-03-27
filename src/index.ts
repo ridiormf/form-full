@@ -14,13 +14,9 @@ export type {
   ButtonHandlerParams,
 } from "./classes/buttonController/types/ButtonHandler";
 
-export type {
-  FieldFormListener,
-  FieldProps,
-} from "./classes/fieldController/types/Field";
+export type { FieldProps } from "./classes/fieldController/types/Field";
 
 export type {
-  FieldValueType,
   ErrorMessageType,
   MaskType,
   MaskToSubmitType,

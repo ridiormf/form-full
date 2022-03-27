@@ -1,13 +1,7 @@
-import {
-  ErrorMessageType,
-  FieldValueType,
-} from "../fieldController/types/FieldHandler";
-
-export type FFOnSubmitType = <T>(ffData: T | FieldValueType) => void;
-export type FFOnChangeType = () => void;
+import { ErrorMessageType } from "../fieldController/types/FieldHandler";
 
 export interface FFDataReturnType {
-  [name: string]: FieldValueType;
+  [name: string]: any;
 }
 
 export type ErrorLabelMessage = {
@@ -15,9 +9,9 @@ export type ErrorLabelMessage = {
   label: string;
 };
 export type FormFullHandlerParams = {
-  onSubmit: FFOnSubmitType;
+  onSubmit: <T>(data: T | { [key in string]: any }) => void;
   clearOnSubmit?: boolean;
   submitOnClear?: boolean;
-  onChange?: FFOnChangeType;
+  onChange?: () => void;
   disabled?: boolean;
 };

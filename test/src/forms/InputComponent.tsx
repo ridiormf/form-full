@@ -1,10 +1,10 @@
-import React from "react";
-import { ErrorMessageType, useFormFull } from "form-full";
+import React, { InputHTMLAttributes } from "react";
+import { ErrorMessageType, FieldProps, useFormFull } from "form-full";
 
 function getErrorClassname(
   base: string,
   error: ErrorMessageType,
-  valid: boolean
+  valid: boolean,
 ) {
   const className = base;
   if (error) return `${className} invalid`;
@@ -18,7 +18,16 @@ function getHint(error: ErrorMessageType, valid: boolean) {
   return null;
 }
 
-function Input(props: any) {
+interface InputProps<FormType>
+  extends FieldProps<FormType>,
+    Omit<
+      InputHTMLAttributes<HTMLInputElement>,
+      "defaultValue" | "name" | "onBlur" | "onChange" | "required"
+    > {
+  label: string;
+}
+
+function Input<FormType>(props: InputProps<FormType>) {
   const {
     value,
     error,
@@ -26,18 +35,17 @@ function Input(props: any) {
     onSubmit,
     onBlur,
     onChange,
-    testFieldError,
     ref,
     formDisabled,
     formLoading,
     // ffHandler, If some extra treatment is needed
-  } = useFormFull.field(props);
+  } = useFormFull.field<FormType>(props);
 
   const { label, required, name } = props;
 
   return (
     <div className={getErrorClassname("form-control", error, valid)}>
-      <label htmlFor={name} className="form-input-label">
+      <label htmlFor={name} className='form-input-label'>
         {label} {!!required ? "*" : ""}
       </label>
       <input
@@ -49,16 +57,12 @@ function Input(props: any) {
         onKeyPress={onSubmit}
         onChange={(event) => {
           onChange(event, event.target.value);
-          if (props.validateOnChange) {
-            testFieldError();
-          }
         }}
         onBlur={onBlur}
-        className="form-input"
+        className='form-input'
       />
-      <span className="form-input-hint">{getHint(error, valid)}</span>
+      <span className='form-input-hint'>{getHint(error, valid)}</span>
     </div>
   );
 }
-
-export default React.memo(Input);
+export default React.memo(Input) as typeof Input;

@@ -3,7 +3,6 @@ import {
   AsyncValidationType,
   ErrorMessageType,
   FieldRef,
-  FieldValueType,
   FieldHandlerParams,
   MaskToSubmitType,
   MaskType,
@@ -20,7 +19,7 @@ class HandleFieldsList {
 
   private invalidNameError(name: string): void {
     throw new Error(
-      `The "form-full" field expects to receive the "name" property as a string, but it received a "${typeof name}".`
+      `The "form-full" field expects to receive the "name" property as a string, but it received a "${typeof name}".`,
     );
   }
 
@@ -30,14 +29,14 @@ class HandleFieldsList {
 
   private cantGetField(name: string): void {
     throw new Error(
-      `The field "${name}" doesn't exist and cannot be used/modified.`
+      `The field "${name}" doesn't exist and cannot be used/modified.`,
     );
   }
 
   private treatUpdateField = (
     name: string,
     formFields: Fields,
-    callback: () => any
+    callback: () => any,
   ) => {
     if (typeof name !== "string") {
       this.invalidNameError(name);
@@ -96,7 +95,7 @@ class HandleFieldsList {
     });
   };
 
-  setFieldDefaultValue = (name: string, defaultValue: FieldValueType): void => {
+  setFieldDefaultValue = (name: string, defaultValue: any): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setDefaultValue(defaultValue);
     });
@@ -114,7 +113,7 @@ class HandleFieldsList {
   };
   setFieldMaskToSubmit = (
     name: string,
-    maskToSubmit: MaskToSubmitType
+    maskToSubmit: MaskToSubmitType,
   ): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setMaskToSubmit(maskToSubmit);
@@ -128,7 +127,7 @@ class HandleFieldsList {
 
   setFieldAsyncValidation = (
     name: string,
-    asyncValidation: AsyncValidationType
+    asyncValidation: AsyncValidationType,
   ): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setAsyncValidation(asyncValidation);
@@ -141,21 +140,21 @@ class HandleFieldsList {
     });
   };
 
-  setValue = (name: string, value: FieldValueType): void => {
+  setValue = (name: string, value: any): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].handleValue(value);
     });
   };
 
-  setFormValue = (name: string, value: FieldValueType): void => {
+  setFormValue = (name: string, value: any): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setValue(value);
     });
   };
 
-  private _getValueToSubmit = (
+  private _getValueToSubmit = <T>(
     name: string,
-    ffHandler: FormFullHandler
+    ffHandler: FormFullHandler<T>,
   ): any => {
     const value = this.getValue(name, false, ffHandler);
     if (Boolean(value) || value === 0) {
@@ -185,7 +184,10 @@ class HandleFieldsList {
     return this.formFields[name].value;
   };
 
-  private _getFinalValue = (name: string, ffHandler: FormFullHandler): any => {
+  private _getFinalValue = <T>(
+    name: string,
+    ffHandler: FormFullHandler<T>,
+  ): any => {
     const { maskToSubmit, value } = this.formFields[name];
     const selectedValue = value;
     const withMask = selectedValue && maskToSubmit;
@@ -194,11 +196,11 @@ class HandleFieldsList {
       : selectedValue;
   };
 
-  getValue = (
+  getValue = <T>(
     name: string,
     withMaskToSubmit: boolean,
-    ffHandler: FormFullHandler
-  ): FieldValueType => {
+    ffHandler: FormFullHandler<T>,
+  ): any => {
     if (this.formFields[name]) {
       return withMaskToSubmit
         ? this._getFinalValue(name, ffHandler)
@@ -206,11 +208,11 @@ class HandleFieldsList {
     }
   };
 
-  getActualValue = (name: string): FieldValueType => {
+  getActualValue = (name: string): any => {
     return this.currentValues[name];
   };
 
-  getValues = (ffHandler: FormFullHandler): FFDataReturnType => {
+  getValues = <T>(ffHandler: FormFullHandler<T>): FFDataReturnType => {
     const data: FFDataReturnType = {};
     this.fieldNames.forEach((name) => {
       data[name] = this._getValueToSubmit(name, ffHandler);
@@ -226,9 +228,9 @@ class HandleFieldsList {
     }
   };
 
-  getValidValues = (
+  getValidValues = <T>(
     saveToSubmit: boolean,
-    ffHandler: FormFullHandler
+    ffHandler: FormFullHandler<T>,
   ): FFDataReturnType => {
     const data: FFDataReturnType = {};
     this.fieldNames.forEach((name) => {
@@ -242,39 +244,30 @@ class HandleFieldsList {
     return data;
   };
 
-  private _testErrorAndReturnData = async (
+  private _testErrorAndReturnData = async <T>(
     name: string,
-    ffHandler: FormFullHandler,
-    concatErrorMessages: (
-      label: string | undefined,
-      errorMessage: ErrorMessageType
-    ) => void,
-    errorCallback: () => void
+    ffHandler: FormFullHandler<T>,
+    errorCallback: () => void,
   ): Promise<FFDataReturnType> => {
     const errorMessage = await this.testFieldError(name, true, ffHandler);
     if (errorMessage) {
-      concatErrorMessages(this.formFields[name].label, errorMessage);
       errorCallback();
     }
     return this._getValueToSubmit(name, ffHandler);
   };
 
-  testFieldError = async (
+  testFieldError = async <T>(
     name: string,
     shouldUpdateInput: boolean,
-    ffHandler: FormFullHandler
+    ffHandler: FormFullHandler<T>,
   ): Promise<ErrorMessageType> => {
     return await this.treatUpdateField(name, this.formFields, () => {
       return this.formFields[name].validate(shouldUpdateInput, ffHandler);
     });
   };
 
-  testErrorsAndReturnData = async (
-    ffHandler: FormFullHandler,
-    concatErrorMessages: (
-      label: string | undefined,
-      errorMessage: ErrorMessageType
-    ) => void
+  testErrorsAndReturnData = async <T>(
+    ffHandler: FormFullHandler<T>,
   ): Promise<{ hasError: boolean; data: FFDataReturnType }> => {
     let hasError = false;
     const data: FFDataReturnType = {};
@@ -284,20 +277,19 @@ class HandleFieldsList {
         const value = await this._testErrorAndReturnData(
           name,
           ffHandler,
-          concatErrorMessages,
           () => {
             if (!hasError) {
               this.setFieldFocus(name);
               hasError = true;
             }
-          }
+          },
         );
         if (value !== undefined) {
           data[name] = value;
         }
 
         return null;
-      })
+      }),
     );
     return { hasError, data };
   };

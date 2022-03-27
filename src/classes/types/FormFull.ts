@@ -1,13 +1,12 @@
-import { CurrentValuesType } from "../fieldController/types/HandleFieldsList";
-import { FFOnChangeType, FFOnSubmitType } from "./FormFullHandler";
+import FormFullHandler from "../FormFullHandler";
 
-export type FormFullProps = {
-  onSubmit: FFOnSubmitType;
+export type FormFullProps<T> = {
+  onSubmit: (data: T | { [key in string]: any }) => void;
   clearOnSubmit?: boolean;
   submitOnClear?: boolean;
-  onChange?: FFOnChangeType;
-  formRef?: Function;
+  onChange?: () => void;
+  formRef?: (ref: FormFullHandler<T>) => void;
   children: React.ReactNode;
-  currentValues?: CurrentValuesType;
+  currentValues?: Partial<T>;
   disabled?: boolean;
 };

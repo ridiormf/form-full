@@ -5,27 +5,22 @@ import {
   AsyncValidationType,
   ErrorMessageType,
   FieldRef,
-  FieldValueType,
   FieldHandlerParams,
   MaskToSubmitType,
   MaskType,
   ValidationType,
 } from "./fieldController/types/FieldHandler";
 import {
-  ErrorLabelMessage,
   FFDataReturnType,
   FormFullHandlerParams,
 } from "./types/FormFullHandler";
-import { CurrentValuesType } from "./fieldController/types/HandleFieldsList";
 
-export default class FormFullHandler {
-  onSubmit;
-  clearOnSubmit = false;
-  submitOnClear = false;
-  onChange;
-  disabled = false;
-
-  errorsMessages: Array<ErrorLabelMessage> = [];
+export default class FormFullHandler<T> {
+  onSubmit: (data: Partial<T> | { [key in string]: any }) => void;
+  onChange?: () => void;
+  clearOnSubmit: boolean;
+  submitOnClear: boolean;
+  disabled: boolean;
 
   formButtonsHandler: HandleButtonsList;
   formFieldsHandler: HandleFieldsList;
@@ -38,9 +33,9 @@ export default class FormFullHandler {
     disabled,
   }: FormFullHandlerParams) {
     this.onSubmit = onSubmit;
+    this.onChange = onChange;
     this.clearOnSubmit = clearOnSubmit ?? false;
     this.submitOnClear = submitOnClear ?? false;
-    this.onChange = onChange ?? undefined;
     this.disabled = disabled ?? false;
 
     this.formButtonsHandler = new HandleButtonsList();
@@ -69,7 +64,7 @@ export default class FormFullHandler {
     this.formButtonsHandler.removeButton(name);
   };
 
-  setCurrentValues = (currentValues: CurrentValuesType): void => {
+  setCurrentValues = <T>(currentValues: T | { [key in string]: any }): void => {
     this.formFieldsHandler.setCurrentValues(currentValues);
   };
 
@@ -89,7 +84,7 @@ export default class FormFullHandler {
   setFieldRequired = (name: string, required: ErrorMessageType): void => {
     this.formFieldsHandler.setFieldRequired(name, required);
   };
-  setFieldDefaultValue = (name: string, defaultValue: FieldValueType): void => {
+  setFieldDefaultValue = (name: string, defaultValue: any): void => {
     this.formFieldsHandler.setFieldDefaultValue(name, defaultValue);
   };
   setFieldLabel = (name: string, label: string): void => {
@@ -100,7 +95,7 @@ export default class FormFullHandler {
   };
   setFieldMaskToSubmit = (
     name: string,
-    maskToSubmit: MaskToSubmitType
+    maskToSubmit: MaskToSubmitType,
   ): void => {
     this.formFieldsHandler.setFieldMaskToSubmit(name, maskToSubmit);
   };
@@ -110,7 +105,7 @@ export default class FormFullHandler {
 
   setFieldAsyncValidation = (
     name: string,
-    asyncValidation: AsyncValidationType
+    asyncValidation: AsyncValidationType,
   ): void => {
     this.formFieldsHandler.setFieldAsyncValidation(name, asyncValidation);
   };
@@ -119,11 +114,11 @@ export default class FormFullHandler {
     return this.formFieldsHandler.getFieldRef(name);
   };
 
-  setValue = (name: string, value: FieldValueType): void => {
+  setValue = (name: string, value: any): void => {
     this.formFieldsHandler.setValue(name, value);
   };
 
-  setFormValue = (name: string, value: FieldValueType): void => {
+  setFormValue = (name: string, value: any): void => {
     this.formFieldsHandler.setFormValue(name, value);
     if (this.onChange) {
       this.onChange();
@@ -134,11 +129,11 @@ export default class FormFullHandler {
     this.formFieldsHandler.clearValue(name, setDefault);
   };
 
-  getValue = (name: string, withMaskToSubmit: boolean): FieldValueType => {
+  getValue = (name: string, withMaskToSubmit: boolean): any => {
     return this.formFieldsHandler.getValue(name, withMaskToSubmit, this);
   };
 
-  getActualValue = (name: string): FieldValueType => {
+  getActualValue = (name: string): any => {
     return this.formFieldsHandler.getActualValue(name);
   };
 
@@ -156,31 +151,19 @@ export default class FormFullHandler {
 
   testErrorsAndReturnData = async (): Promise<{
     hasError: boolean;
-    data: FFDataReturnType;
+    data: T | { [key in string]: any };
   }> => {
-    return this.formFieldsHandler.testErrorsAndReturnData(
-      this,
-      this._concatErrorMessages
-    );
-  };
-
-  private _concatErrorMessages = (
-    label: string | undefined,
-    message: ErrorMessageType
-  ) => {
-    if (label) {
-      this.errorsMessages.push({ label, message });
-    }
+    return this.formFieldsHandler.testErrorsAndReturnData(this);
   };
 
   testFieldError = async (
     name: string,
-    shouldUpdateInput: boolean = true
+    shouldUpdateInput: boolean = true,
   ): Promise<ErrorMessageType> => {
     return await this.formFieldsHandler.testFieldError(
       name,
       shouldUpdateInput,
-      this
+      this,
     );
   };
 

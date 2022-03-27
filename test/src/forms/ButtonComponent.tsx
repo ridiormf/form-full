@@ -1,14 +1,14 @@
 import React from "react";
 import { useFormFull } from "form-full";
 
-function Button({
+function Button<T>({
   children,
   actionType,
   name,
   onClick: onClickProps,
   ...props
 }: any) {
-  const { onClick, formLoading, formDisabled } = useFormFull.button({
+  const { onClick, formLoading, formDisabled } = useFormFull.button<T>({
     name,
     actionType,
     onClick: onClickProps,
@@ -17,13 +17,12 @@ function Button({
   return (
     <button
       {...props}
-      className="button"
+      className='button'
       disabled={formDisabled}
-      onClick={formLoading ? null : onClick}
-    >
+      onClick={formLoading ? null : onClick}>
       {formLoading ? "Loading..." : children}
     </button>
   );
 }
 
-export default React.memo(Button);
+export default Button;
