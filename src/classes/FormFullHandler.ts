@@ -68,17 +68,14 @@ export default class FormFullHandler<T> {
     this.formFieldsHandler.setCurrentValues(currentValues);
   };
 
-  setDisabled = (disabled: boolean): void => {
-    this.disabled = disabled;
-  };
-
   getDisabledForm = (): boolean => {
     return this.disabled;
   };
 
-  setAllDisabled = (disabled: boolean): void => {
+  setFormDisabled = (disabled: boolean): void => {
     this.disabled = disabled;
     this.formFieldsHandler.setAllDisabled(disabled);
+    this.formButtonsHandler.setButtonsDisabled(disabled);
   };
 
   setFieldRequired = (name: string, required: ErrorMessageType): void => {

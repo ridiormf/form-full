@@ -1,16 +1,11 @@
 import {
   AsyncValidationType,
-  DisableHandlerType,
-  ErrorHandlerType,
   ErrorMessageType,
   FieldRef,
   FieldHandlerParams,
-  HandleValueType,
   MaskToSubmitType,
   MaskType,
-  SetLoadingType,
   ValidationType,
-  ValidHandlerType,
 } from "./types/FieldHandler";
 
 import FormFullHandler from "../FormFullHandler";
@@ -28,11 +23,11 @@ class FieldHandler {
   validation?: ValidationType;
   asyncValidation?: AsyncValidationType;
 
-  errorHandler: ErrorHandlerType;
-  validHandler: ValidHandlerType;
-  handleValue: HandleValueType;
-  setLoading: SetLoadingType;
-  disableHandler: DisableHandlerType;
+  errorHandler: (error: ErrorMessageType) => void;
+  validHandler: (valid: boolean) => void;
+  handleValue: (value: any) => void;
+  setLoading: (loading: boolean) => void;
+  disableHandler: (disabled: boolean) => void;
 
   ref: FieldRef;
 

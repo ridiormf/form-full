@@ -87,10 +87,11 @@ export default function useField<FormType>(
   const mount = React.useCallback(() => {
     ffHandler?.setNewField(props.name, {
       ref: ref.current,
-      errorHandler: setError,
-      validHandler: setValid,
+      errorHandler: (error: ErrorMessageType) => setError(error),
+      validHandler: (valid: boolean) => setValid(valid),
       handleValue: (value) => onChange(null, value),
-      setLoading: setFormLoading,
+      setLoading: (loading: boolean) => setFormLoading(loading),
+      disableHandler: (disabled: boolean) => setFormDisabled(disabled),
       value,
       label: props.label ?? props.placeholder,
       defaultValue: props.defaultValue,
@@ -99,12 +100,21 @@ export default function useField<FormType>(
       validation: props.validation,
       asyncValidation: props.asyncValidation,
       required: props.required,
-      disableHandler: setFormDisabled,
     });
     return () => {
       ffHandler?.removeField(props.name);
     };
-  }, [ffHandler, props, setError, ref, value, onChange]);
+  }, [
+    ffHandler,
+    props,
+    setError,
+    setValid,
+    setFormLoading,
+    setFormDisabled,
+    ref,
+    value,
+    onChange,
+  ]);
 
   React.useEffect(mount, []);
 

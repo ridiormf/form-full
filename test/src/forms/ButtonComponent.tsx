@@ -1,25 +1,25 @@
 import React from "react";
-import { useFormFull } from "form-full";
+import { ButtonProps, useFormFull } from "form-full";
 
 function Button<T>({
   children,
-  actionType,
-  name,
+  action,
+  feedback,
   onClick: onClickProps,
   ...props
-}: any) {
+}: ButtonProps & any) {
   const { onClick, formLoading, formDisabled } = useFormFull.button<T>({
-    name,
-    actionType,
+    feedback,
+    action,
     onClick: onClickProps,
   });
-
   return (
     <button
       {...props}
       className='button'
       disabled={formDisabled}
-      onClick={formLoading ? null : onClick}>
+      style={{ opacity: formDisabled ? 0.5 : 1 }}
+      onClick={formLoading || formDisabled ? null : onClick}>
       {formLoading ? "Loading..." : children}
     </button>
   );

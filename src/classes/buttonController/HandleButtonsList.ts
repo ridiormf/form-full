@@ -8,7 +8,7 @@ class HandleButtonsList {
 
   static invalidNameError(name: string): void {
     throw new Error(
-      `The "form-full" button expects to receive the "name" property as a string, but it received a "${typeof name}".`
+      `The "form-full" button expects to receive the "name" property as a string, but it received a "${typeof name}".`,
     );
   }
 
@@ -18,7 +18,7 @@ class HandleButtonsList {
 
   static cantDeleteButton(name: string): void {
     throw new Error(
-      `The button "${name}" doesn't exist and cannot be removed.`
+      `The button "${name}" doesn't exist and cannot be removed.`,
     );
   }
 
@@ -46,6 +46,12 @@ class HandleButtonsList {
   setButtonsStatus = (isValidating: boolean): void => {
     this.buttonNames.forEach((name) => {
       this.formButtons[name]._handleStatus(isValidating);
+    });
+  };
+
+  setButtonsDisabled = (disabled: boolean): void => {
+    this.buttonNames.forEach((name) => {
+      this.formButtons[name]._setDisabledByForm(disabled);
     });
   };
 }

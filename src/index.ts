@@ -22,9 +22,6 @@ export type {
   MaskToSubmitType,
   ValidationType,
   AsyncValidationType,
-  ErrorHandlerType,
-  ValidHandlerType,
-  HandleValueType,
   FieldHandlerParams,
 } from "./classes/fieldController/types/FieldHandler";
 

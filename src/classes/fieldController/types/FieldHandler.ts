@@ -1,4 +1,3 @@
-import React from "react";
 import FormFullHandler from "../../FormFullHandler";
 
 export type ErrorMessageType = string | null | undefined;
@@ -17,14 +16,6 @@ export type AsyncValidationType = <T>(
 ) => Promise<ErrorMessageType>;
 export type FieldRef = any;
 
-export type ErrorHandlerType = React.Dispatch<
-  React.SetStateAction<ErrorMessageType>
->;
-export type ValidHandlerType = React.Dispatch<React.SetStateAction<boolean>>;
-export type HandleValueType = React.Dispatch<React.SetStateAction<any>>;
-export type SetLoadingType = React.Dispatch<React.SetStateAction<boolean>>;
-export type DisableHandlerType = React.Dispatch<React.SetStateAction<boolean>>;
-
 export interface FieldHandlerParams {
   value?: any;
   defaultValue?: any;
@@ -37,11 +28,11 @@ export interface FieldHandlerParams {
   validation?: ValidationType;
   asyncValidation?: AsyncValidationType;
 
-  errorHandler: ErrorHandlerType;
-  validHandler: ValidHandlerType;
-  handleValue: HandleValueType;
-  setLoading: SetLoadingType;
-  disableHandler: DisableHandlerType;
+  errorHandler: (error: ErrorMessageType) => void;
+  validHandler: (valid: boolean) => void;
+  handleValue: (value: any) => void;
+  setLoading: (loading: boolean) => void;
+  disableHandler: (disabled: boolean) => void;
 
   ref: FieldRef;
 }

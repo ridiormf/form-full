@@ -62,35 +62,29 @@ export default function App() {
   }
 
   return (
-    <div className="App">
-      <div className="form-container">
+    <div className='App'>
+      <div className='form-container'>
         <FormFull
           disabled={!currentValues}
           currentValues={currentValues}
           onSubmit={(data) => {
-            console.log({ data });
             setSavedValues(data);
-          }}
-        >
-          <div className="inputs-container">
-            <Input name="name" label="Your name" required="Required field" />
-            <Input name="age" label="Your age" />
+          }}>
+          <div className='inputs-container'>
+            <Input name='name' label='Your name' required='Required field' />
+            <Input name='age' label='Your age' />
             <Input
-              name="defaultValue"
-              label="Default Value"
-              defaultValue="Some Value"
+              name='defaultValue'
+              label='Default Value'
+              defaultValue='Some Value'
             />
           </div>
-          <Button name="submit" actionType="submit">
+          <Button action='submit' feedback>
             Submit
           </Button>
-          <Button name="clear" actionType="clear">
-            Clear All Values
-          </Button>
-          <Button name="clearDefault" actionType="clearDefault">
-            Set All Values to Default
-          </Button>
-          <Button name="simulation" onClick={() => simulateRequest()}>
+          <Button action='clear'>Clear All Values</Button>
+          <Button action='clearDefault'>Set All Values to Default</Button>
+          <Button onClick={() => simulateRequest()}>
             Simulate data from API
           </Button>
         </FormFull>
@@ -149,7 +143,7 @@ function Input(props) {
 
   return (
     <div className={getErrorClassname("form-control", error, valid)}>
-      <label for={name} className="form-input-label">
+      <label for={name} className='form-input-label'>
         {label} {!!required ? "*" : ""}
       </label>
       <input
@@ -167,9 +161,9 @@ function Input(props) {
           }
         }}
         onBlur={onBlur}
-        className="form-input"
+        className='form-input'
       />
-      <span className="form-input-hint">{getHint(error, valid)}</span>
+      <span className='form-input-hint'>{getHint(error, valid)}</span>
     </div>
   );
 }
@@ -184,24 +178,23 @@ import { useFormFull } from "form-full";
 
 function Button({
   children,
-  actionType,
-  name,
+  action,
+  feedback,
   onClick: onClickProps,
   ...props
 }) {
   const { onClick, formLoading, formDisabled } = useFormFull.button({
-    name,
-    actionType,
+    feedback,
+    action,
     onClick: onClickProps,
   });
 
   return (
     <button
       {...props}
-      className="button"
+      className='button'
       disabled={formDisabled}
-      onClick={formLoading ? null : onClick}
-    >
+      onClick={formLoading ? null : onClick}>
       {formLoading ? "Loading..." : children}
     </button>
   );
@@ -273,11 +266,11 @@ Hook used to connect a **button** component to be controlled by `form-full`
 
 Receives an object as a parameter with the properties:
 
-| Name       | Type          | Required | Description                                                                                                                                                                                                                                                                                                                       |
-| ---------- | ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| actionType | string / null | no       | Defines what type of action the button will perform when clicked. Possible values: `submit` (calls FormFull's onSubmit), `clear` (clear all field values) and `clearDefault` (clear all values to default values). If none is passed it will not take any action, it is necessary to pass an `onClick` for it to have some action |
-| onClick    | func          | no       | Function that will be called when the button is clicked. It is necessary to pass to `useFormFull.button` and not use it directly in the button rendered                                                                                                                                                                           |
-| name       | string        | `yes`    | Button name to be managed by the form.                                                                                                                                                                                                                                                                                            |
+| Name     | Type          | Required | Description                                                                                                                                                                                                                                                                                                                       |
+| -------- | ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| action   | string / null | no       | Defines what type of action the button will perform when clicked. Possible values: `submit` (calls FormFull's onSubmit), `clear` (clear all field values) and `clearDefault` (clear all values to default values). If none is passed it will not take any action, it is necessary to pass an `onClick` for it to have some action |
+| feedback | boolean       | no`      | If true, button will receive update in styles and will be blocked while form is being submitted                                                                                                                                                                                                                                   |
+| onClick  | func          | no       | Function that will be called when the button is clicked. It is necessary to pass to `useFormFull.button` and not use it directly in the button rendered                                                                                                                                                                           |
 
 Returns an object with properties:
 
@@ -304,8 +297,6 @@ Returns an object with properties:
 | removeButton            | (name: string)                                      | void                                                            | //TODO      |
 | removeField             | (name: string)                                      | void                                                            | //TODO      |
 | setCurrentValues        | (currentValues: Object<[name: string]: any>)        | void                                                            | //TODO      |
-| setAllDisabled          | (disabled: boolean)                                 | void                                                            | //TODO      |
-| setDisabled             | (disabled: boolean)                                 | void                                                            | //TODO      |
 | setFieldAsyncValidation | (name: string, asyncValidation: func)               | void                                                            | //TODO      |
 | setFieldDefaultValue    | (name: string, defaultValue: any)                   | void                                                            | //TODO      |
 | setFieldFocus           | (name: string)                                      | void                                                            | //TODO      |
@@ -314,6 +305,7 @@ Returns an object with properties:
 | setFieldMaskToSubmit    | (name: string, maskToSubmit: func)                  | void                                                            | //TODO      |
 | setFieldRequired        | (name: string, required: string / null / undefined) | void                                                            | //TODO      |
 | setFieldValidation      | (name: string, asyncValidation: func)               | void                                                            | //TODO      |
+| setFormDisabled         | (disabled: boolean)                                 | void                                                            | //TODO      |
 | setFormValue            | (name: string, value: any)                          | void                                                            | //TODO      |
 | setNewButton            | (name: string, buttonParams: Object<params>)        | void                                                            | //TODO      |
 | setNewField             | (name: string, buttonParams: Object<params>)        | void                                                            | //TODO      |

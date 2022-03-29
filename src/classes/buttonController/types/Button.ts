@@ -1,7 +1,7 @@
 import { ButtonActionType } from "./ButtonHandler";
 
 export interface ButtonProps {
-  name: string;
-  actionType?: ButtonActionType;
+  feedback?: boolean;
+  action?: ButtonActionType;
   onClick?: (event: any) => void;
 }

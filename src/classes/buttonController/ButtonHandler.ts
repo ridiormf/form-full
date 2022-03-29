@@ -1,22 +1,26 @@
 import { ButtonHandlerParams } from "./types/ButtonHandler";
 
 class ButtonHandler {
-  actionType;
+  action;
   setLoading;
   setDisabled;
 
-  constructor({ actionType, setLoading, setDisabled }: ButtonHandlerParams) {
-    this.actionType = actionType;
+  constructor({ action, setLoading, setDisabled }: ButtonHandlerParams) {
+    this.action = action;
     this.setLoading = setLoading;
     this.setDisabled = setDisabled;
   }
 
   _handleStatus = (isValidating: boolean): void => {
-    if (this.actionType === "submit") {
+    if (this.action === "submit") {
       this.setLoading(isValidating);
     } else {
       this.setDisabled(isValidating);
     }
+  };
+
+  _setDisabledByForm = (disabled: boolean): void => {
+    this.setDisabled(disabled);
   };
 }
 

@@ -44,7 +44,9 @@ function Input<FormType>(props: InputProps<FormType>) {
   const { label, required, name } = props;
 
   return (
-    <div className={getErrorClassname("form-control", error, valid)}>
+    <div
+      className={getErrorClassname("form-control", error, valid)}
+      style={{ opacity: formDisabled ? 0.5 : 1 }}>
       <label htmlFor={name} className='form-input-label'>
         {label} {!!required ? "*" : ""}
       </label>
