@@ -1,7 +1,7 @@
 import React from "react";
 import { useConstructor } from "../hooks/useConstructor";
 import FormFullHandler from "../classes/FormFullHandler";
-import { FormFullProps } from "../classes/types/FormFull";
+import { FormFullProps } from "./FormFull-types";
 
 export const FormContext = React.createContext<FormFullHandler<unknown>>(
   {} as FormFullHandler<unknown>,

@@ -1,6 +1,6 @@
 import { HandleButtonsList } from "./buttonController/HandleButtonsList";
 import { HandleFieldsList } from "./fieldController/HandleFieldsList";
-import { ButtonHandlerParams } from "./buttonController/types/ButtonHandler";
+import { ButtonHandlerParams } from "./buttonController/ButtonHandler-types";
 import {
   AsyncValidationType,
   ErrorMessageType,
@@ -9,21 +9,18 @@ import {
   MaskToSubmitType,
   MaskType,
   ValidationType,
-} from "./fieldController/types/FieldHandler";
-import {
-  FFDataReturnType,
-  FormFullHandlerParams,
-} from "./types/FormFullHandler";
+} from "./fieldController/FieldHandler-types";
+import { FormFullData, FormFullHandlerParams } from "./FormFullHandler-types";
 
 export default class FormFullHandler<T> {
-  onSubmit: (data: Partial<T> | { [key in string]: any }) => void;
+  onSubmit: (data: FormFullData<T>) => void;
   onChange?: () => void;
   clearOnSubmit: boolean;
   submitOnClear: boolean;
   disabled: boolean;
 
   formButtonsHandler: HandleButtonsList;
-  formFieldsHandler: HandleFieldsList;
+  formFieldsHandler: HandleFieldsList<T>;
 
   constructor({
     onSubmit,
@@ -64,7 +61,7 @@ export default class FormFullHandler<T> {
     this.formButtonsHandler.removeButton(name);
   };
 
-  setCurrentValues = <T>(currentValues: T | { [key in string]: any }): void => {
+  setCurrentValues = (currentValues: FormFullData<T>): void => {
     this.formFieldsHandler.setCurrentValues(currentValues);
   };
 
@@ -134,7 +131,7 @@ export default class FormFullHandler<T> {
     return this.formFieldsHandler.getActualValue(name);
   };
 
-  getValues = (): FFDataReturnType => {
+  getValues = (): FormFullData<T> => {
     return this.formFieldsHandler.getValues(this);
   };
 
@@ -142,13 +139,13 @@ export default class FormFullHandler<T> {
     this.formFieldsHandler.setFieldFocus(name);
   };
 
-  getValidValues = (valuesWithMaskToSubmit: boolean): FFDataReturnType => {
+  getValidValues = (valuesWithMaskToSubmit: boolean): FormFullData<T> => {
     return this.formFieldsHandler.getValidValues(valuesWithMaskToSubmit, this);
   };
 
   testErrorsAndReturnData = async (): Promise<{
     hasError: boolean;
-    data: T | { [key in string]: any };
+    data: FormFullData<T>;
   }> => {
     return this.formFieldsHandler.testErrorsAndReturnData(this);
   };

@@ -1,5 +1,5 @@
-import { ButtonHandlerParams } from "./types/ButtonHandler";
-import { Buttons } from "./types/HandleButtonsList";
+import { ButtonHandlerParams } from "./ButtonHandler-types";
+import { Buttons } from "./HandleButtonsList-types";
 import { ButtonHandler } from "./ButtonHandler";
 
 class HandleButtonsList {

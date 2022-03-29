@@ -1,5 +1,5 @@
-import field from "./useField";
-import button from "./useButton";
+import field from "./hooks/useField";
+import button from "./hooks/useButton";
 
 const useFormFull = {
   field,

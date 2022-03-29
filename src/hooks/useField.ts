@@ -1,13 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
-import { FormContext } from "./components/FormFull";
-import { FieldProps } from "./classes/fieldController/types/Field";
+import { FormContext } from "../components/FormFull";
+import {
+  FieldConnector,
+  FieldProps,
+} from "../classes/fieldController/FieldHandler-types";
 import {
   ErrorMessageType,
   FieldRef,
-} from "./classes/fieldController/types/FieldHandler";
-import { FieldConnector } from "./classes/types/connector";
-import { FormFullHandler } from ".";
+} from "../classes/fieldController/FieldHandler-types";
+import FormFullHandler from "../classes/FormFullHandler";
 
 export default function useField<FormType>(
   props: FieldProps<FormType>,

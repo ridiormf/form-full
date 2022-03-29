@@ -5,16 +5,16 @@ export type { default as FormFullHandler } from "./classes/FormFullHandler";
 
 export type {
   FormFullHandlerParams,
-  FFDataReturnType,
-} from "./classes/types/FormFullHandler";
+  FormFullData,
+} from "./classes/FormFullHandler-types";
 
-export type { ButtonProps } from "./classes/buttonController/types/Button";
+export type { ButtonProps } from "./classes/buttonController/ButtonHandler-types";
 export type {
   ButtonActionType,
   ButtonHandlerParams,
-} from "./classes/buttonController/types/ButtonHandler";
+} from "./classes/buttonController/ButtonHandler-types";
 
-export type { FieldProps } from "./classes/fieldController/types/Field";
+export type { FieldProps } from "./classes/fieldController/FieldHandler-types";
 
 export type {
   ErrorMessageType,
@@ -23,6 +23,6 @@ export type {
   ValidationType,
   AsyncValidationType,
   FieldHandlerParams,
-} from "./classes/fieldController/types/FieldHandler";
+} from "./classes/fieldController/FieldHandler-types";
 
-export type { CurrentValuesType } from "./classes/fieldController/types/HandleFieldsList";
+export type { CurrentValuesType } from "./classes/fieldController/HandleFieldsList-types";

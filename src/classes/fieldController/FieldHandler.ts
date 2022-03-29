@@ -6,7 +6,7 @@ import {
   MaskToSubmitType,
   MaskType,
   ValidationType,
-} from "./types/FieldHandler";
+} from "./FieldHandler-types";
 
 import FormFullHandler from "../FormFullHandler";
 
@@ -121,7 +121,7 @@ class FieldHandler {
     }
   };
 
-  getFormatedValueToSubmit = <T>(ffHandler: FormFullHandler<T>): any => {
+  getFormattedValueToSubmit = <T>(ffHandler: FormFullHandler<T>): any => {
     let fixedValue = this.value;
     if (typeof this.value === "string") {
       fixedValue = this.value.trim();
@@ -167,12 +167,8 @@ class FieldHandler {
         );
         this.setLoading(false);
         if (errorMessage) {
-          const eMessage = !this.required
-            ? "Campo não obrigatório. Remova seu valor ou corrija o seguinte erro para prosseguir: " +
-              errorMessage
-            : errorMessage;
           if (shouldUpdateInput) {
-            this.errorHandler(eMessage);
+            this.errorHandler(errorMessage);
             this.validHandler(false);
           }
 

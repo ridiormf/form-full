@@ -18,7 +18,7 @@ function getHint(error: ErrorMessageType, valid: boolean) {
   return null;
 }
 
-interface InputProps<FormType>
+export interface InputProps<FormType>
   extends FieldProps<FormType>,
     Omit<
       InputHTMLAttributes<HTMLInputElement>,

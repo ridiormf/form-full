@@ -7,12 +7,12 @@ import {
   MaskToSubmitType,
   MaskType,
   ValidationType,
-} from "./types/FieldHandler";
-import { FFDataReturnType } from "../types/FormFullHandler";
-import { CurrentValuesType, Fields } from "./types/HandleFieldsList";
+} from "./FieldHandler-types";
+import { CurrentValuesType, Fields } from "./HandleFieldsList-types";
 import { FieldHandler } from "./FieldHandler";
+import { FormFullData } from "../FormFullHandler-types";
 
-class HandleFieldsList {
+class HandleFieldsList<T> {
   formFields: Fields = {};
   fieldNames: Array<string> = [];
   currentValues: CurrentValuesType = {};
@@ -152,13 +152,13 @@ class HandleFieldsList {
     });
   };
 
-  private _getValueToSubmit = <T>(
+  private _getValueToSubmit = (
     name: string,
     ffHandler: FormFullHandler<T>,
   ): any => {
     const value = this.getValue(name, false, ffHandler);
     if (Boolean(value) || value === 0) {
-      return this.formFields[name].getFormatedValueToSubmit(ffHandler);
+      return this.formFields[name].getFormattedValueToSubmit(ffHandler);
     }
   };
 
@@ -184,7 +184,7 @@ class HandleFieldsList {
     return this.formFields[name].value;
   };
 
-  private _getFinalValue = <T>(
+  private _getFinalValue = (
     name: string,
     ffHandler: FormFullHandler<T>,
   ): any => {
@@ -196,7 +196,7 @@ class HandleFieldsList {
       : selectedValue;
   };
 
-  getValue = <T>(
+  getValue = (
     name: string,
     withMaskToSubmit: boolean,
     ffHandler: FormFullHandler<T>,
@@ -212,8 +212,8 @@ class HandleFieldsList {
     return this.currentValues[name];
   };
 
-  getValues = <T>(ffHandler: FormFullHandler<T>): FFDataReturnType => {
-    const data: FFDataReturnType = {};
+  getValues = (ffHandler: FormFullHandler<T>): FormFullData<T> => {
+    const data: FormFullData<T> = {};
     this.fieldNames.forEach((name) => {
       data[name] = this._getValueToSubmit(name, ffHandler);
       return null;
@@ -228,11 +228,11 @@ class HandleFieldsList {
     }
   };
 
-  getValidValues = <T>(
+  getValidValues = (
     saveToSubmit: boolean,
     ffHandler: FormFullHandler<T>,
-  ): FFDataReturnType => {
-    const data: FFDataReturnType = {};
+  ): FormFullData<T> => {
+    const data: FormFullData<T> = {};
     this.fieldNames.forEach((name) => {
       const input = this.formFields[name];
       if (!input.error) {
@@ -244,11 +244,11 @@ class HandleFieldsList {
     return data;
   };
 
-  private _testErrorAndReturnData = async <T>(
+  private _testErrorAndReturnData = async (
     name: string,
     ffHandler: FormFullHandler<T>,
     errorCallback: () => void,
-  ): Promise<FFDataReturnType> => {
+  ): Promise<FormFullData<T>> => {
     const errorMessage = await this.testFieldError(name, true, ffHandler);
     if (errorMessage) {
       errorCallback();
@@ -256,7 +256,7 @@ class HandleFieldsList {
     return this._getValueToSubmit(name, ffHandler);
   };
 
-  testFieldError = async <T>(
+  testFieldError = async (
     name: string,
     shouldUpdateInput: boolean,
     ffHandler: FormFullHandler<T>,
@@ -266,11 +266,11 @@ class HandleFieldsList {
     });
   };
 
-  testErrorsAndReturnData = async <T>(
+  testErrorsAndReturnData = async (
     ffHandler: FormFullHandler<T>,
-  ): Promise<{ hasError: boolean; data: FFDataReturnType }> => {
+  ): Promise<{ hasError: boolean; data: FormFullData<T> }> => {
     let hasError = false;
-    const data: FFDataReturnType = {};
+    const data: FormFullData<T> = {};
 
     await Promise.all(
       this.fieldNames.map(async (name) => {

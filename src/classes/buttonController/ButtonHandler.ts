@@ -1,4 +1,4 @@
-import { ButtonHandlerParams } from "./types/ButtonHandler";
+import { ButtonHandlerParams } from "./ButtonHandler-types";
 
 class ButtonHandler {
   action;

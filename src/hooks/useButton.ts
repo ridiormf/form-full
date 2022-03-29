@@ -1,9 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import React from "react";
-import { FormContext } from "./components/FormFull";
-import { ButtonProps } from "./classes/buttonController/types/Button";
-import { ButtonConnector } from "./classes/types/connector";
+import { FormContext } from "../components/FormFull";
+import {
+  ButtonConnector,
+  ButtonProps,
+} from "../classes/buttonController/ButtonHandler-types";
 
 export default function useButton<T>(props: ButtonProps): ButtonConnector<T> {
   const ffHandler = React.useContext(FormContext);

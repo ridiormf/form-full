@@ -1,7 +1,7 @@
 import React, { StrictMode } from "react";
 import ReactDOM from "react-dom";
 import { sleep } from "./utils/sleep";
-import { CurrentValuesType, FormFull, FormFullHandler } from "form-full";
+import { CurrentValuesType, FormFull } from "form-full";
 import "./styles.css";
 import Input from "./forms/InputComponent";
 import Button from "./forms/ButtonComponent";
@@ -17,13 +17,12 @@ type FormData = {
   simulation: string;
 };
 
-let _ref: FormFullHandler<FormData>;
-
 export default function App() {
   const [currentValues, setCurrentValues] = React.useState<CurrentValuesType>(
     {},
   );
   const [savedValues, setSavedValues] = React.useState<Partial<FormData>>();
+  const [disabledForm, setDisabledForm] = React.useState(false);
 
   function simulateRequest() {
     setCurrentValues({});
@@ -35,21 +34,15 @@ export default function App() {
     });
   }
 
-  React.useEffect(() => {
-    setTimeout(() => {
-      _ref.setFormDisabled(true);
-    }, 5000);
-  }, []);
-
   return (
     <div className='App'>
       <div className='form-container'>
         <FormFull<FormData>
+          disabled={disabledForm}
           currentValues={currentValues ?? {}}
           onSubmit={(data) => {
             setSavedValues(data);
-          }}
-          formRef={(ref) => (_ref = ref)}>
+          }}>
           <div className='inputs-container'>
             <Input name='name' label='Your name' required='Required field' />
             <Input name='age' label='Your age' />
@@ -73,6 +66,9 @@ export default function App() {
           </Button>
           <Button onClick={() => simulateRequest()}>
             Simulate data from API
+          </Button>
+          <Button onClick={() => setDisabledForm(!disabledForm)}>
+            {disabledForm ? "Enable Form" : "Disable Form"}
           </Button>
         </FormFull>
       </div>

@@ -50,6 +50,7 @@ import Button from "./buttons/Button";
 export default function App() {
   const [currentValues, setCurrentValues] = React.useState({});
   const [savedValues, setSavedValues] = React.useState();
+  const [disabledForm, setDisabledForm] = React.useState(false);
 
   function simulateRequest() {
     setCurrentValues(null);
@@ -65,7 +66,7 @@ export default function App() {
     <div className='App'>
       <div className='form-container'>
         <FormFull
-          disabled={!currentValues}
+          disabled={disabledForm}
           currentValues={currentValues}
           onSubmit={(data) => {
             setSavedValues(data);
@@ -86,6 +87,9 @@ export default function App() {
           <Button action='clearDefault'>Set All Values to Default</Button>
           <Button onClick={() => simulateRequest()}>
             Simulate data from API
+          </Button>
+          <Button onClick={() => setDisabledForm(!disabledForm)}>
+            {disabledForm ? "Enable Form" : "Disable Form"}
           </Button>
         </FormFull>
       </div>

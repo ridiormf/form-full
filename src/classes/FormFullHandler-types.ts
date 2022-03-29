@@ -1,15 +1,13 @@
-import { ErrorMessageType } from "../fieldController/types/FieldHandler";
-
-export interface FFDataReturnType {
-  [name: string]: any;
-}
+import { ErrorMessageType } from "..";
 
 export type ErrorLabelMessage = {
   message: ErrorMessageType;
   label: string;
 };
+export type FormFullData<T> = Partial<T> | { [key in string]: any };
+
 export type FormFullHandlerParams = {
-  onSubmit: <T>(data: T | { [key in string]: any }) => void;
+  onSubmit: <T>(data: FormFullData<T>) => void;
   clearOnSubmit?: boolean;
   submitOnClear?: boolean;
   onChange?: () => void;

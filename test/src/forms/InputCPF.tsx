@@ -1,8 +1,8 @@
 import { maskCPF, removeNumberMask } from "../utils/masks";
 import { validateCPF } from "../utils/validations";
-import InputComponent from "./InputComponent";
+import InputComponent, { InputProps } from "./InputComponent";
 
-export default function InputCPF<T>(props: any) {
+export default function InputCPF<T>(props: InputProps<T>) {
   return (
     <InputComponent<T>
       {...props}

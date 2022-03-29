@@ -1,4 +1,4 @@
-import FormFullHandler from "../../FormFullHandler";
+import FormFullHandler from "../FormFullHandler";
 
 export type ErrorMessageType = string | null | undefined;
 export type MaskType = (value: any) => any;
@@ -35,4 +35,41 @@ export interface FieldHandlerParams {
   disableHandler: (disabled: boolean) => void;
 
   ref: FieldRef;
+}
+
+export type FieldProps<T> = {
+  name: string;
+  maxLength?: number;
+  onChange?: (
+    value: unknown,
+    ffHandler: FormFullHandler<T>,
+    event?: any,
+  ) => void;
+  onBlur?: (value: unknown, ffHandler: FormFullHandler<T>, event?: any) => void;
+  placeholder?: string;
+  submitOnBlur?: boolean;
+
+  defaultValue?: any;
+
+  label?: string;
+  required?: ErrorMessageType;
+
+  mask?: MaskType;
+  maskToSubmit?: MaskToSubmitType;
+  validation?: ValidationType;
+  asyncValidation?: AsyncValidationType;
+};
+
+export interface FieldConnector<FormType> {
+  value: any;
+  error: ErrorMessageType;
+  valid: boolean;
+  formLoading: boolean;
+  formDisabled: boolean;
+  onSubmit: (event: any) => void;
+  onBlur: (event: any) => void;
+  onChange: (event: any, value: any) => void;
+  testFieldError: () => void;
+  ref: FieldRef;
+  ffHandler?: FormFullHandler<FormType>;
 }
