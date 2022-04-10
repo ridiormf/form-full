@@ -1,4 +1,4 @@
-import { FieldHandler } from "./FieldHandler";
+import FieldHandler from "./FieldHandler";
 
 export interface CurrentValuesType {
   [name: string]: any;

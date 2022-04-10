@@ -1,13 +1,9 @@
-import { ErrorMessageType } from "..";
-
-export type ErrorLabelMessage = {
-  message: ErrorMessageType;
-  label: string;
-};
-export type FormFullData<T> = Partial<T> | { [key in string]: any };
+export type FormFullData<FormType> =
+  | Partial<FormType>
+  | { [key in string]: any };
 
 export type FormFullHandlerParams = {
-  onSubmit: <T>(data: FormFullData<T>) => void;
+  onSubmit: <FormType>(data: FormFullData<FormType>) => void;
   clearOnSubmit?: boolean;
   submitOnClear?: boolean;
   onChange?: () => void;

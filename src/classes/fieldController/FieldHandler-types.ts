@@ -1,32 +1,27 @@
 import FormFullHandler from "../FormFullHandler";
 
 export type ErrorMessageType = string | null | undefined;
-export type MaskType = (value: any) => any;
-export type MaskToSubmitType = <T>(
+export type MaskType = <FormType>(
   value: any,
-  ffHandler?: FormFullHandler<T>,
+  ffHandler?: FormFullHandler<FormType>,
 ) => any;
-export type ValidationType = <T>(
+
+export type ValidationType = <FormType>(
   value: any,
-  ffHandler?: FormFullHandler<T>,
-) => ErrorMessageType;
-export type AsyncValidationType = <T>(
-  value: any,
-  ffHandler?: FormFullHandler<T>,
-) => Promise<ErrorMessageType>;
+  ffHandler?: FormFullHandler<FormType>,
+) => ErrorMessageType | Promise<ErrorMessageType>;
+
 export type FieldRef = any;
 
 export interface FieldHandlerParams {
   value?: any;
   defaultValue?: any;
 
-  label?: string;
   required?: ErrorMessageType;
 
   mask?: MaskType;
-  maskToSubmit?: MaskToSubmitType;
-  validation?: ValidationType;
-  asyncValidation?: AsyncValidationType;
+  maskToSubmit?: MaskType;
+  validation?: ValidationType | ValidationType[];
 
   errorHandler: (error: ErrorMessageType) => void;
   validHandler: (valid: boolean) => void;
@@ -37,28 +32,25 @@ export interface FieldHandlerParams {
   ref: FieldRef;
 }
 
-export type FieldProps<T> = {
+export interface FieldProps<FormType>
+  extends Pick<
+    FieldHandlerParams,
+    "mask" | "maskToSubmit" | "validation" | "required" | "defaultValue"
+  > {
   name: string;
   maxLength?: number;
-  onChange?: (
-    value: unknown,
-    ffHandler: FormFullHandler<T>,
-    event?: any,
+  onChange?: <ValueType, EventType>(
+    value: ValueType,
+    ffHandler: FormFullHandler<FormType>,
+    event?: EventType,
   ) => void;
-  onBlur?: (value: unknown, ffHandler: FormFullHandler<T>, event?: any) => void;
-  placeholder?: string;
+  onBlur?: <ValueType, EventType>(
+    value: ValueType,
+    ffHandler: FormFullHandler<FormType>,
+    event?: EventType,
+  ) => void;
   submitOnBlur?: boolean;
-
-  defaultValue?: any;
-
-  label?: string;
-  required?: ErrorMessageType;
-
-  mask?: MaskType;
-  maskToSubmit?: MaskToSubmitType;
-  validation?: ValidationType;
-  asyncValidation?: AsyncValidationType;
-};
+}
 
 export interface FieldConnector<FormType> {
   value: any;
@@ -66,9 +58,9 @@ export interface FieldConnector<FormType> {
   valid: boolean;
   formLoading: boolean;
   formDisabled: boolean;
-  onSubmit: (event: any) => void;
-  onBlur: (event: any) => void;
-  onChange: (event: any, value: any) => void;
+  onSubmit: <EventType>(event: EventType) => void;
+  onBlur: <EventType>(event: EventType) => void;
+  onChange: <EventType, ValueType>(event: EventType, value: ValueType) => void;
   testFieldError: () => void;
   ref: FieldRef;
   ffHandler?: FormFullHandler<FormType>;

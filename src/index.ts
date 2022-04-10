@@ -19,9 +19,7 @@ export type { FieldProps } from "./classes/fieldController/FieldHandler-types";
 export type {
   ErrorMessageType,
   MaskType,
-  MaskToSubmitType,
   ValidationType,
-  AsyncValidationType,
   FieldHandlerParams,
 } from "./classes/fieldController/FieldHandler-types";
 

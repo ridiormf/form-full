@@ -2,13 +2,11 @@ import { HandleButtonsList } from "./buttonController/HandleButtonsList";
 import { HandleFieldsList } from "./fieldController/HandleFieldsList";
 import { ButtonHandlerParams } from "./buttonController/ButtonHandler-types";
 import {
-  AsyncValidationType,
   ErrorMessageType,
   FieldRef,
   FieldHandlerParams,
-  MaskToSubmitType,
-  MaskType,
   ValidationType,
+  MaskType,
 } from "./fieldController/FieldHandler-types";
 import { FormFullData, FormFullHandlerParams } from "./FormFullHandler-types";
 
@@ -81,27 +79,17 @@ export default class FormFullHandler<T> {
   setFieldDefaultValue = (name: string, defaultValue: any): void => {
     this.formFieldsHandler.setFieldDefaultValue(name, defaultValue);
   };
-  setFieldLabel = (name: string, label: string): void => {
-    this.formFieldsHandler.setFieldLabel(name, label);
-  };
   setFieldMask = (name: string, mask: MaskType): void => {
     this.formFieldsHandler.setFieldMask(name, mask);
   };
-  setFieldMaskToSubmit = (
-    name: string,
-    maskToSubmit: MaskToSubmitType,
-  ): void => {
+  setFieldMaskToSubmit = (name: string, maskToSubmit: MaskType): void => {
     this.formFieldsHandler.setFieldMaskToSubmit(name, maskToSubmit);
   };
-  setFieldValidation = (name: string, validation: ValidationType): void => {
-    this.formFieldsHandler.setFieldValidation(name, validation);
-  };
-
-  setFieldAsyncValidation = (
+  setFieldValidation = (
     name: string,
-    asyncValidation: AsyncValidationType,
+    validation: ValidationType | ValidationType[],
   ): void => {
-    this.formFieldsHandler.setFieldAsyncValidation(name, asyncValidation);
+    this.formFieldsHandler.setFieldValidation(name, validation);
   };
 
   getFieldRef = (name: string): FieldRef => {
@@ -168,7 +156,7 @@ export default class FormFullHandler<T> {
     }
   };
 
-  clearSpecificFields = (names: Array<string>, setDefault: boolean = true) => {
+  clearSpecificFields = (names: string[], setDefault: boolean = true) => {
     this.formFieldsHandler.clearSpecificFields(names, setDefault);
   };
 

@@ -1,6 +1,6 @@
 import { ButtonHandlerParams } from "./ButtonHandler-types";
 
-class ButtonHandler {
+export default class ButtonHandler {
   action;
   setLoading;
   setDisabled;
@@ -23,5 +23,3 @@ class ButtonHandler {
     this.setDisabled(disabled);
   };
 }
-
-export { ButtonHandler };

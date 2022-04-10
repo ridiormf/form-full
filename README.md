@@ -235,14 +235,12 @@ Receives an object as a parameter with the properties:
 | --------------- | ------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | asyncValidation | func   | no       | used to validate input asynchronously (such as validating the existence of the username in a registration). **Important**: Like `validation`, need to return a string (if invalid) or null / undefined (if valid). |
 | defaultValue    | any    | no       | Default field value. Value the component starts when it is first rendered                                                                                                                                          |
-| label           | string | no/`yes` | Label used to concat errors message in a single object. Used to display all errors in a custom way. **Important**: `label` is required if `placeholder` is not passed                                              |
 | mask            | func   | no       | Function to format the end-user visible value                                                                                                                                                                      |
 | maskToSubmit    | func   | no       | Function to treat value when the form is submitted, converting it to the most suitable value for the developer                                                                                                     |
 | maxLength       | number | no       | Limits the number of characters in the field. It is a native parameter, but `form-full` also uses it                                                                                                               |
 | name            | string | `yes`    | Field name to be managed by the form. When the form is submitted the value will be inserted in a key of this name                                                                                                  |
 | onBlur          | func   | no       | Function that will be called when the input loses focus. It is necessary to pass to `useFormFull.field` and not use it directly in the field                                                                       |
 | onChange        | func   | no       | Function that will be called when the input value changes. It is necessary to pass to `useFormFull.field` and not use it directly in the field                                                                     |
-| placeholder     | string | no/`yes` | Replaces and is required if the `label` is not passed                                                                                                                                                              |
 | required        | string | no       | Error message that defines the field as required. It will be shown whenever the field validation is called and only if it is not filled.                                                                           |
 | submitOnBlur    | bool   | no       | If`true`is passed the form will be submitted when field loses focus.                                                                                                                                               |
 | validation      | func   | no       | Used to validate input. **Important**: Like`asyncValidation`, need to return a string (if invalid) or null / undefined (if valid).                                                                                 |
@@ -290,7 +288,7 @@ Returns an object with properties:
 | Method Name             | Params                                              | Return                                                          | Description |
 | ----------------------- | --------------------------------------------------- | --------------------------------------------------------------- | ----------- |
 | clearFields             | (setDefault: boolean = true)                        | void                                                            | //TODO      |
-| clearSpecificFields     | (names: Array<string>, setDefault: boolean = true)  | void                                                            | //TODO      |
+| clearSpecificFields     | (names: string[], setDefault: boolean = true)       | void                                                            | //TODO      |
 | clearValue              | (name: string, setDefault: bool = true)             | void                                                            | //TODO      |
 | getActualValue          | (name: string)                                      | any                                                             | //TODO      |
 | getDisabledForm         |                                                     | bool                                                            | //TODO      |
@@ -304,7 +302,6 @@ Returns an object with properties:
 | setFieldAsyncValidation | (name: string, asyncValidation: func)               | void                                                            | //TODO      |
 | setFieldDefaultValue    | (name: string, defaultValue: any)                   | void                                                            | //TODO      |
 | setFieldFocus           | (name: string)                                      | void                                                            | //TODO      |
-| setFieldLabel           | (name: string, label: string)                       | void                                                            | //TODO      |
 | setFieldMask            | (name: string, mask: func)                          | void                                                            | //TODO      |
 | setFieldMaskToSubmit    | (name: string, maskToSubmit: func)                  | void                                                            | //TODO      |
 | setFieldRequired        | (name: string, required: string / null / undefined) | void                                                            | //TODO      |

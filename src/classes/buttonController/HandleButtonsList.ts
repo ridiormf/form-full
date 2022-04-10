@@ -1,25 +1,24 @@
 import { ButtonHandlerParams } from "./ButtonHandler-types";
 import { Buttons } from "./HandleButtonsList-types";
-import { ButtonHandler } from "./ButtonHandler";
+import ButtonHandler from "./ButtonHandler";
+import { throwError } from "../../utils/errors";
 
 class HandleButtonsList {
   formButtons: Buttons = {};
-  buttonNames: Array<string> = [];
+  buttonNames: string[] = [];
 
   static invalidNameError(name: string): void {
-    throw new Error(
-      `The "form-full" button expects to receive the "name" property as a string, but it received a "${typeof name}".`,
+    throwError(
+      `button expects to receive the "name" property as a string, but it received a "${typeof name}".`,
     );
   }
 
   static buttonAlreadyExist(name: string): void {
-    throw new Error(`The button "${name}" has already been created.`);
+    throwError(`The button "${name}" has already been created.`);
   }
 
   static cantDeleteButton(name: string): void {
-    throw new Error(
-      `The button "${name}" doesn't exist and cannot be removed.`,
-    );
+    throwError(`The button "${name}" doesn't exist and cannot be removed.`);
   }
 
   setNewButton = (name: string, buttonParams: ButtonHandlerParams): void => {

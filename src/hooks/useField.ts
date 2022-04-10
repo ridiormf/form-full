@@ -95,12 +95,10 @@ export default function useField<FormType>(
       setLoading: (loading: boolean) => setFormLoading(loading),
       disableHandler: (disabled: boolean) => setFormDisabled(disabled),
       value,
-      label: props.label ?? props.placeholder,
       defaultValue: props.defaultValue,
       mask: props.mask,
       maskToSubmit: props.maskToSubmit,
       validation: props.validation,
-      asyncValidation: props.asyncValidation,
       required: props.required,
     });
     return () => {

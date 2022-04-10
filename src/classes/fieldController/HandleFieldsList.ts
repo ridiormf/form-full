@@ -1,34 +1,33 @@
 import FormFullHandler from "../FormFullHandler";
 import {
-  AsyncValidationType,
   ErrorMessageType,
   FieldRef,
   FieldHandlerParams,
-  MaskToSubmitType,
   MaskType,
   ValidationType,
 } from "./FieldHandler-types";
 import { CurrentValuesType, Fields } from "./HandleFieldsList-types";
-import { FieldHandler } from "./FieldHandler";
+import FieldHandler from "./FieldHandler";
 import { FormFullData } from "../FormFullHandler-types";
+import { throwError } from "../../utils/errors";
 
 class HandleFieldsList<T> {
   formFields: Fields = {};
-  fieldNames: Array<string> = [];
+  fieldNames: string[] = [];
   currentValues: CurrentValuesType = {};
 
   private invalidNameError(name: string): void {
-    throw new Error(
-      `The "form-full" field expects to receive the "name" property as a string, but it received a "${typeof name}".`,
+    throwError(
+      `Field expects to receive the "name" property as a string, but it received a "${typeof name}".`,
     );
   }
 
   private fieldAlreadyExist(name: string): void {
-    throw new Error(`The field "${name}" has already been created.`);
+    throwError(`The field "${name}" has already been created.`);
   }
 
   private cantGetField(name: string): void {
-    throw new Error(
+    throwError(
       `The field "${name}" doesn't exist and cannot be used/modified.`,
     );
   }
@@ -100,37 +99,23 @@ class HandleFieldsList<T> {
       this.formFields[name].setDefaultValue(defaultValue);
     });
   };
-  setFieldLabel = (name: string, label: string): void => {
-    this.treatUpdateField(name, this.formFields, () => {
-      this.formFields[name].setLabel(label);
-    });
-  };
 
   setFieldMask = (name: string, mask: MaskType): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setMask(mask);
     });
   };
-  setFieldMaskToSubmit = (
-    name: string,
-    maskToSubmit: MaskToSubmitType,
-  ): void => {
+  setFieldMaskToSubmit = (name: string, maskToSubmit: MaskType): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setMaskToSubmit(maskToSubmit);
     });
   };
-  setFieldValidation = (name: string, validation: ValidationType): void => {
-    this.treatUpdateField(name, this.formFields, () => {
-      this.formFields[name].setValidation(validation);
-    });
-  };
-
-  setFieldAsyncValidation = (
+  setFieldValidation = (
     name: string,
-    asyncValidation: AsyncValidationType,
+    validation: ValidationType | ValidationType[],
   ): void => {
     this.treatUpdateField(name, this.formFields, () => {
-      this.formFields[name].setAsyncValidation(asyncValidation);
+      this.formFields[name].setValidation(validation);
     });
   };
 
@@ -174,7 +159,7 @@ class HandleFieldsList<T> {
     });
   };
 
-  clearSpecificFields = (names: Array<string>, setDefault: boolean): void => {
+  clearSpecificFields = (names: string[], setDefault: boolean): void => {
     names.forEach((name) => {
       this.clearValue(name, setDefault);
     });
