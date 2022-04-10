@@ -7,10 +7,10 @@ export const FormContext = React.createContext<FormFullHandler<unknown>>(
   {} as FormFullHandler<unknown>,
 );
 
-function FormFull<T>(props: FormFullProps<T>): JSX.Element {
-  const ffHandler = React.useRef<FormFullHandler<T>>();
+function FormFull<FormType>(props: FormFullProps<FormType>): JSX.Element {
+  const ffHandler = React.useRef<FormFullHandler<FormType>>();
   useConstructor(() => {
-    ffHandler.current = new FormFullHandler<T>({
+    ffHandler.current = new FormFullHandler<FormType>({
       onSubmit: props.onSubmit,
       clearOnSubmit: props.clearOnSubmit,
       submitOnClear: props.submitOnClear,
@@ -36,7 +36,8 @@ function FormFull<T>(props: FormFullProps<T>): JSX.Element {
   }, [props.disabled]);
 
   return (
-    <FormContext.Provider value={ffHandler.current as FormFullHandler<T>}>
+    <FormContext.Provider
+      value={ffHandler.current as FormFullHandler<FormType>}>
       {props.children}
     </FormContext.Provider>
   );

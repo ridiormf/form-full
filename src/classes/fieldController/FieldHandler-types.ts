@@ -1,27 +1,27 @@
 import FormFullHandler from "../FormFullHandler";
 
 export type ErrorMessageType = string | null | undefined;
-export type MaskType = <FormType>(
+export type MaskType<FormType> = (
   value: any,
-  ffHandler?: FormFullHandler<FormType>,
+  ffHandler: FormFullHandler<FormType>,
 ) => any;
 
-export type ValidationType = <FormType>(
+export type ValidationType<FormType> = (
   value: any,
-  ffHandler?: FormFullHandler<FormType>,
+  ffHandler: FormFullHandler<FormType>,
 ) => ErrorMessageType | Promise<ErrorMessageType>;
 
 export type FieldRef = any;
 
-export interface FieldHandlerParams {
+export interface FieldHandlerParams<FormType> {
   value?: any;
   defaultValue?: any;
 
   required?: ErrorMessageType;
 
-  mask?: MaskType;
-  maskToSubmit?: MaskType;
-  validation?: ValidationType | ValidationType[];
+  mask?: MaskType<FormType>;
+  maskToSubmit?: MaskType<FormType>;
+  validation?: ValidationType<FormType> | ValidationType<FormType>[];
 
   errorHandler: (error: ErrorMessageType) => void;
   validHandler: (valid: boolean) => void;
@@ -30,11 +30,13 @@ export interface FieldHandlerParams {
   disableHandler: (disabled: boolean) => void;
 
   ref: FieldRef;
+
+  ffHandler: FormFullHandler<FormType>;
 }
 
 export interface FieldProps<FormType>
   extends Pick<
-    FieldHandlerParams,
+    FieldHandlerParams<FormType>,
     "mask" | "maskToSubmit" | "validation" | "required" | "defaultValue"
   > {
   name: string;

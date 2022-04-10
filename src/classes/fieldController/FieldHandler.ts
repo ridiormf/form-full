@@ -8,15 +8,15 @@ import {
 
 import FormFullHandler from "../FormFullHandler";
 
-export default class FieldHandler {
+export default class FieldHandler<FormType> {
   value: any;
-  maskToSubmit?: MaskType;
+  maskToSubmit?: MaskType<FormType>;
   error: boolean = false;
 
   private defaultValue: any;
   private required: ErrorMessageType;
-  private mask?: MaskType;
-  private validation?: ValidationType | ValidationType[];
+  private mask?: MaskType<FormType>;
+  private validation?: ValidationType<FormType> | ValidationType<FormType>[];
   private ref: FieldRef;
 
   handleValue: (value: any) => void;
@@ -25,6 +25,8 @@ export default class FieldHandler {
   private errorHandler: (error: ErrorMessageType) => void;
   private validHandler: (valid: boolean) => void;
   private setLoading: (loading: boolean) => void;
+
+  private ffHandler: FormFullHandler<FormType>;
 
   constructor({
     value,
@@ -39,7 +41,8 @@ export default class FieldHandler {
     setLoading,
     disableHandler,
     ref,
-  }: FieldHandlerParams) {
+    ffHandler,
+  }: FieldHandlerParams<FormType>) {
     this.value = value;
     this.defaultValue = defaultValue;
     this.required = required;
@@ -52,6 +55,7 @@ export default class FieldHandler {
     this.setLoading = setLoading;
     this.disableHandler = disableHandler;
     this.ref = ref;
+    this.ffHandler = ffHandler;
   }
 
   getError = (): boolean => {
@@ -66,15 +70,17 @@ export default class FieldHandler {
     this.defaultValue = defaultValue;
   };
 
-  setMask = (mask: MaskType): void => {
+  setMask = (mask: MaskType<FormType>): void => {
     this.mask = mask;
   };
 
-  setMaskToSubmit = (maskToSubmit: MaskType): void => {
+  setMaskToSubmit = (maskToSubmit: MaskType<FormType>): void => {
     this.maskToSubmit = maskToSubmit;
   };
 
-  setValidation = (validation: ValidationType | ValidationType[]): void => {
+  setValidation = (
+    validation: ValidationType<FormType> | ValidationType<FormType>[],
+  ): void => {
     this.validation = validation;
   };
 
@@ -102,9 +108,7 @@ export default class FieldHandler {
     }
   };
 
-  getFormattedValueToSubmit = <FormType>(
-    ffHandler: FormFullHandler<FormType>,
-  ): any => {
+  getFormattedValueToSubmit = (): any => {
     let fixedValue = this.value;
     if (typeof this.value === "string") {
       fixedValue = this.value.trim();
@@ -112,23 +116,20 @@ export default class FieldHandler {
       fixedValue = Number(String(this.value).trim());
     }
     return !!this.maskToSubmit && fixedValue
-      ? this.maskToSubmit(fixedValue, ffHandler)
+      ? this.maskToSubmit(fixedValue, this.ffHandler)
       : fixedValue;
   };
 
   private _getMaskedValue(): any {
-    return this.mask ? this.mask(this.value) : this.value;
+    return this.mask ? this.mask(this.value, this.ffHandler) : this.value;
   }
 
-  private async _getErrorMessage<FormType>(
-    value: any,
-    ffHandler: FormFullHandler<FormType>,
-  ): Promise<ErrorMessageType> {
+  private async _getErrorMessage(value: any): Promise<ErrorMessageType> {
     if (this.validation) {
       if (Array.isArray(this.validation)) {
         let message = null;
         this.validation!.some((_validation) => {
-          const _message = _validation(value, ffHandler);
+          const _message = _validation(value, this.ffHandler);
           message = _message;
           if (message) return true;
           return false;
@@ -139,19 +140,13 @@ export default class FieldHandler {
     return null;
   }
 
-  validate = async <FormType>(
-    shouldUpdateInput: boolean,
-    ffHandler: FormFullHandler<FormType>,
-  ): Promise<ErrorMessageType> => {
+  validate = async (shouldUpdateInput: boolean): Promise<ErrorMessageType> => {
     const maskedValue = this._getMaskedValue();
     const hasValue = Boolean(maskedValue) || maskedValue === 0;
     if (hasValue) {
       if (this.validation) {
         this.setLoading(true);
-        const errorMessage = await this._getErrorMessage<FormType>(
-          maskedValue,
-          ffHandler,
-        );
+        const errorMessage = await this._getErrorMessage(maskedValue);
         this.setLoading(false);
         if (errorMessage) {
           if (shouldUpdateInput) {

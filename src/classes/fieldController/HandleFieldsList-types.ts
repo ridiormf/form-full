@@ -1,9 +1,5 @@
 import FieldHandler from "./FieldHandler";
 
-export interface CurrentValuesType {
-  [name: string]: any;
-}
-
-export interface Fields {
-  [name: string]: FieldHandler;
+export interface Fields<FormType> {
+  [name: string]: FieldHandler<FormType>;
 }

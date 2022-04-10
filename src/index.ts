@@ -22,5 +22,3 @@ export type {
   ValidationType,
   FieldHandlerParams,
 } from "./classes/fieldController/FieldHandler-types";
-
-export type { CurrentValuesType } from "./classes/fieldController/HandleFieldsList-types";

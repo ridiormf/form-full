@@ -299,13 +299,12 @@ Returns an object with properties:
 | removeButton            | (name: string)                                      | void                                                            | //TODO      |
 | removeField             | (name: string)                                      | void                                                            | //TODO      |
 | setCurrentValues        | (currentValues: Object<[name: string]: any>)        | void                                                            | //TODO      |
-| setFieldAsyncValidation | (name: string, asyncValidation: func)               | void                                                            | //TODO      |
 | setFieldDefaultValue    | (name: string, defaultValue: any)                   | void                                                            | //TODO      |
 | setFieldFocus           | (name: string)                                      | void                                                            | //TODO      |
 | setFieldMask            | (name: string, mask: func)                          | void                                                            | //TODO      |
 | setFieldMaskToSubmit    | (name: string, maskToSubmit: func)                  | void                                                            | //TODO      |
 | setFieldRequired        | (name: string, required: string / null / undefined) | void                                                            | //TODO      |
-| setFieldValidation      | (name: string, asyncValidation: func)               | void                                                            | //TODO      |
+| setFieldValidation      | (name: string, asyncValidation: func / func[])      | void                                                            | //TODO      |
 | setFormDisabled         | (disabled: boolean)                                 | void                                                            | //TODO      |
 | setFormValue            | (name: string, value: any)                          | void                                                            | //TODO      |
 | setNewButton            | (name: string, buttonParams: Object<params>)        | void                                                            | //TODO      |

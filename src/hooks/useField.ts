@@ -17,7 +17,7 @@ export default function useField<FormType>(
   const getInitialStringValue = React.useCallback((): any => {
     const { defaultValue = "", mask } = props;
     const value = defaultValue;
-    const finalValue = mask ? mask(value) : value;
+    const finalValue = mask ? mask(value, ffHandler) : value;
     return finalValue;
   }, [props]);
 
@@ -40,7 +40,9 @@ export default function useField<FormType>(
       if (maxLength && (value !== null || value !== undefined)) {
         maxLengthValue = String(value).substring(0, maxLength);
       }
-      const resultedValue = mask ? mask(maxLengthValue) : maxLengthValue;
+      const resultedValue = mask
+        ? mask(maxLengthValue, ffHandler)
+        : maxLengthValue;
       ffHandler?.setFormValue(name, resultedValue);
       setStateValue(resultedValue);
       setValid(false);
@@ -56,11 +58,7 @@ export default function useField<FormType>(
         ffHandler?.testFieldError(props.name);
       }
       if (props.onBlur) {
-        props.onBlur(
-          value as any,
-          ffHandler as FormFullHandler<FormType>,
-          event,
-        );
+        props.onBlur(value, ffHandler, event);
       }
     }, 10);
   }
@@ -76,11 +74,7 @@ export default function useField<FormType>(
       setValueWithoutOnChangeString(value);
 
       if (props.onChange) {
-        props.onChange(
-          value as any,
-          ffHandler as FormFullHandler<FormType>,
-          event as unknown,
-        );
+        props.onChange(value, ffHandler, event);
       }
     },
     [ffHandler, props, setValueWithoutOnChangeString],
@@ -100,6 +94,7 @@ export default function useField<FormType>(
       maskToSubmit: props.maskToSubmit,
       validation: props.validation,
       required: props.required,
+      ffHandler,
     });
     return () => {
       ffHandler?.removeField(props.name);

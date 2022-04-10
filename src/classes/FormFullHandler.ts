@@ -10,15 +10,15 @@ import {
 } from "./fieldController/FieldHandler-types";
 import { FormFullData, FormFullHandlerParams } from "./FormFullHandler-types";
 
-export default class FormFullHandler<T> {
-  onSubmit: (data: FormFullData<T>) => void;
+export default class FormFullHandler<FormType> {
+  onSubmit: (data: FormFullData<FormType>) => void;
   onChange?: () => void;
   clearOnSubmit: boolean;
   submitOnClear: boolean;
   disabled: boolean;
 
   formButtonsHandler: HandleButtonsList;
-  formFieldsHandler: HandleFieldsList<T>;
+  formFieldsHandler: HandleFieldsList<FormType>;
 
   constructor({
     onSubmit,
@@ -34,7 +34,9 @@ export default class FormFullHandler<T> {
     this.disabled = disabled ?? false;
 
     this.formButtonsHandler = new HandleButtonsList();
-    this.formFieldsHandler = new HandleFieldsList();
+    this.formFieldsHandler = new HandleFieldsList(
+      this as FormFullHandler<FormType>,
+    );
   }
 
   static handleError = {
@@ -44,7 +46,10 @@ export default class FormFullHandler<T> {
     },
   };
 
-  setNewField = (name: string, fieldParams: FieldHandlerParams): void => {
+  setNewField = (
+    name: string,
+    fieldParams: FieldHandlerParams<FormType>,
+  ): void => {
     this.formFieldsHandler.setNewField(name, fieldParams);
   };
 
@@ -59,7 +64,7 @@ export default class FormFullHandler<T> {
     this.formButtonsHandler.removeButton(name);
   };
 
-  setCurrentValues = (currentValues: FormFullData<T>): void => {
+  setCurrentValues = (currentValues: FormFullData<FormType>): void => {
     this.formFieldsHandler.setCurrentValues(currentValues);
   };
 
@@ -79,15 +84,18 @@ export default class FormFullHandler<T> {
   setFieldDefaultValue = (name: string, defaultValue: any): void => {
     this.formFieldsHandler.setFieldDefaultValue(name, defaultValue);
   };
-  setFieldMask = (name: string, mask: MaskType): void => {
+  setFieldMask = (name: string, mask: MaskType<FormType>): void => {
     this.formFieldsHandler.setFieldMask(name, mask);
   };
-  setFieldMaskToSubmit = (name: string, maskToSubmit: MaskType): void => {
+  setFieldMaskToSubmit = (
+    name: string,
+    maskToSubmit: MaskType<FormType>,
+  ): void => {
     this.formFieldsHandler.setFieldMaskToSubmit(name, maskToSubmit);
   };
   setFieldValidation = (
     name: string,
-    validation: ValidationType | ValidationType[],
+    validation: ValidationType<FormType> | ValidationType<FormType>[],
   ): void => {
     this.formFieldsHandler.setFieldValidation(name, validation);
   };
@@ -112,41 +120,39 @@ export default class FormFullHandler<T> {
   };
 
   getValue = (name: string, withMaskToSubmit: boolean): any => {
-    return this.formFieldsHandler.getValue(name, withMaskToSubmit, this);
+    return this.formFieldsHandler.getValue(name, withMaskToSubmit);
   };
 
   getActualValue = (name: string): any => {
     return this.formFieldsHandler.getActualValue(name);
   };
 
-  getValues = (): FormFullData<T> => {
-    return this.formFieldsHandler.getValues(this);
+  getValues = (): FormFullData<FormType> => {
+    return this.formFieldsHandler.getValues();
   };
 
   setFieldFocus = (name: string): void => {
     this.formFieldsHandler.setFieldFocus(name);
   };
 
-  getValidValues = (valuesWithMaskToSubmit: boolean): FormFullData<T> => {
-    return this.formFieldsHandler.getValidValues(valuesWithMaskToSubmit, this);
+  getValidValues = (
+    valuesWithMaskToSubmit: boolean,
+  ): FormFullData<FormType> => {
+    return this.formFieldsHandler.getValidValues(valuesWithMaskToSubmit);
   };
 
   testErrorsAndReturnData = async (): Promise<{
     hasError: boolean;
-    data: FormFullData<T>;
+    data: FormFullData<FormType>;
   }> => {
-    return this.formFieldsHandler.testErrorsAndReturnData(this);
+    return this.formFieldsHandler.testErrorsAndReturnData();
   };
 
   testFieldError = async (
     name: string,
     shouldUpdateInput: boolean = true,
   ): Promise<ErrorMessageType> => {
-    return await this.formFieldsHandler.testFieldError(
-      name,
-      shouldUpdateInput,
-      this,
-    );
+    return await this.formFieldsHandler.testFieldError(name, shouldUpdateInput);
   };
 
   clearFields = (setDefault: boolean = true) => {
