@@ -15,9 +15,9 @@ export interface ButtonProps {
   onClick?: (event: any) => void;
 }
 
-export interface ButtonConnector<FormType> {
+export interface ButtonConnector<FormData> {
   onClick: (event: any) => void;
-  ffHandler: FormFullHandler<FormType> | undefined;
+  ffHandler: FormFullHandler<FormData> | undefined;
   formDisabled: boolean;
   formLoading: boolean;
 }

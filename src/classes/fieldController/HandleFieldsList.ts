@@ -8,55 +8,55 @@ import {
 } from "./FieldHandler-types";
 import { Fields } from "./HandleFieldsList-types";
 import FieldHandler from "./FieldHandler";
-import { FormFullData } from "../FormFullHandler-types";
+import { Name } from "../FormFullHandler-types";
 import { throwError } from "../../utils/errors";
 
-class HandleFieldsList<FormType> {
-  private formFields: Fields<FormType> = {};
-  private fieldNames: string[] = [];
-  private currentValues: FormFullData<FormType> = {};
-  private ffHandler: FormFullHandler<FormType>;
+class HandleFieldsList<FormData> {
+  private formFields: Fields<FormData> = {};
+  private fieldNames: Name<FormData>[] = [];
+  private currentValues = {} as Partial<FormData>;
+  private ffHandler: FormFullHandler<FormData>;
 
-  constructor(ffHandler: FormFullHandler<FormType>) {
+  constructor(ffHandler: FormFullHandler<FormData>) {
     this.ffHandler = ffHandler;
   }
 
-  private invalidNameError(name: string): void {
+  private static invalidNameError(name: string): void {
     throwError(
       `Field expects to receive the "name" property as a string, but it received a "${typeof name}".`,
     );
   }
 
-  private fieldAlreadyExist(name: string): void {
+  private static fieldAlreadyExist(name: string): void {
     throwError(`The field "${name}" has already been created.`);
   }
 
-  private cantGetField(name: string): void {
+  private static cantGetField(name: string): void {
     throwError(
       `The field "${name}" doesn't exist and cannot be used/modified.`,
     );
   }
 
   private treatUpdateField = (
-    name: string,
-    formFields: Fields<FormType>,
+    name: Name<FormData>,
+    formFields: Fields<FormData>,
     callback: () => any,
   ) => {
     if (typeof name !== "string") {
-      this.invalidNameError(name);
+      HandleFieldsList.invalidNameError(name);
     } else if (formFields[name]) {
       return callback();
     } else {
-      this.cantGetField(name);
+      HandleFieldsList.cantGetField(name);
     }
   };
 
   setNewField = (
-    name: string,
-    fieldParams: FieldHandlerParams<FormType>,
+    name: Name<FormData>,
+    fieldParams: FieldHandlerParams<FormData>,
   ): void => {
     if (typeof name !== "string") {
-      this.invalidNameError(name);
+      HandleFieldsList.invalidNameError(name);
     } else if (!this.formFields[name]) {
       this.fieldNames.push(name);
       this.formFields[name] = new FieldHandler(fieldParams);
@@ -65,11 +65,11 @@ class HandleFieldsList<FormType> {
         this.setValue(name, this.currentValues[name]);
       }
     } else {
-      this.fieldAlreadyExist(name);
+      HandleFieldsList.fieldAlreadyExist(name);
     }
   };
 
-  removeField = (name: string): void => {
+  removeField = (name: Name<FormData>): void => {
     this.treatUpdateField(name, this.formFields, () => {
       delete this.formFields[name];
       const nameIndex = this.fieldNames.indexOf(name);
@@ -77,7 +77,7 @@ class HandleFieldsList<FormType> {
     });
   };
 
-  setCurrentValues = (currentValues: FormFullData<FormType>): void => {
+  setCurrentValues = (currentValues: Partial<FormData>): void => {
     if (currentValues) {
       this.fieldNames.forEach((name) => {
         if (currentValues[name] !== this.currentValues[name]) {
@@ -86,7 +86,7 @@ class HandleFieldsList<FormType> {
       });
       this.currentValues = currentValues;
     } else {
-      this.currentValues = {};
+      this.currentValues = {} as Partial<FormData>;
     }
   };
 
@@ -96,66 +96,69 @@ class HandleFieldsList<FormType> {
     });
   };
 
-  setFieldRequired = (name: string, required: ErrorMessageType): void => {
+  setFieldRequired = (
+    name: Name<FormData>,
+    required: ErrorMessageType,
+  ): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setRequired(required);
     });
   };
 
-  setFieldDefaultValue = (name: string, defaultValue: any): void => {
+  setFieldDefaultValue = (name: Name<FormData>, defaultValue: any): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setDefaultValue(defaultValue);
     });
   };
 
-  setFieldMask = (name: string, mask: MaskType<FormType>): void => {
+  setFieldMask = (name: Name<FormData>, mask?: MaskType<FormData>): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setMask(mask);
     });
   };
   setFieldMaskToSubmit = (
-    name: string,
-    maskToSubmit: MaskType<FormType>,
+    name: Name<FormData>,
+    maskToSubmit?: MaskType<FormData>,
   ): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setMaskToSubmit(maskToSubmit);
     });
   };
-  setFieldValidation = (
-    name: string,
-    validation: ValidationType<FormType> | ValidationType<FormType>[],
+  setFieldValidations = (
+    name: Name<FormData>,
+    validations?: ValidationType<FormData>[],
   ): void => {
     this.treatUpdateField(name, this.formFields, () => {
-      this.formFields[name].setValidation(validation);
+      this.formFields[name].setValidations(validations);
     });
   };
 
-  getFieldRef = (name: string): FieldRef => {
+  getFieldRef = (name: Name<FormData>): FieldRef => {
     return this.treatUpdateField(name, this.formFields, () => {
       return this.formFields[name].getRef();
     });
   };
 
-  setValue = (name: string, value: any): void => {
+  setValue = (name: Name<FormData>, value: any): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].handleValue(value);
     });
   };
 
-  setFormValue = (name: string, value: any): void => {
+  setFormValue = (name: Name<FormData>, value: any): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setValue(value);
     });
   };
 
-  private _getValueToSubmit = (name: string): any => {
+  private _getValueToSubmit = (name: Name<FormData>): any => {
     const value = this.getValue(name, false);
     if (Boolean(value) || value === 0) {
       return this.formFields[name].getFormattedValueToSubmit();
     }
   };
 
-  clearValue = (name: string, setDefault: boolean): void => {
+  clearValue = (name: Name<FormData>, setDefault: boolean): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].clearValue(setDefault);
     });
@@ -167,17 +170,20 @@ class HandleFieldsList<FormType> {
     });
   };
 
-  clearSpecificFields = (names: string[], setDefault: boolean): void => {
+  clearSpecificFields = (
+    names: Name<FormData>[],
+    setDefault: boolean,
+  ): void => {
     names.forEach((name) => {
       this.clearValue(name, setDefault);
     });
   };
 
-  private _getValue = (name: string): any => {
+  private _getValue = (name: Name<FormData>): any => {
     return this.formFields[name].value;
   };
 
-  private _getFinalValue = (name: string): any => {
+  private _getFinalValue = (name: Name<FormData>): any => {
     const { maskToSubmit, value } = this.formFields[name];
     const selectedValue = value;
     const withMask = selectedValue && maskToSubmit;
@@ -186,7 +192,7 @@ class HandleFieldsList<FormType> {
       : selectedValue;
   };
 
-  getValue = (name: string, withMaskToSubmit: boolean): any => {
+  getValue = (name: Name<FormData>, withMaskToSubmit: boolean): any => {
     if (this.formFields[name]) {
       return withMaskToSubmit
         ? this._getFinalValue(name)
@@ -194,12 +200,12 @@ class HandleFieldsList<FormType> {
     }
   };
 
-  getActualValue = (name: string): any => {
+  getActualValue = (name: Name<FormData>): any => {
     return this.currentValues[name];
   };
 
-  getValues = (): FormFullData<FormType> => {
-    const data: FormFullData<FormType> = {};
+  getValues = (): FormData => {
+    const data = {} as FormData;
     this.fieldNames.forEach((name) => {
       data[name] = this._getValueToSubmit(name);
       return null;
@@ -207,15 +213,15 @@ class HandleFieldsList<FormType> {
     return data;
   };
 
-  setFieldFocus = (name: string): void => {
+  setFieldFocus = (name: Name<FormData>): void => {
     const ref = this.getFieldRef(name);
     if (ref) {
       ref.focus();
     }
   };
 
-  getValidValues = (saveToSubmit: boolean): FormFullData<FormType> => {
-    const data: FormFullData<FormType> = {};
+  getValidValues = (saveToSubmit: boolean): FormData => {
+    const data = {} as FormData;
     this.fieldNames.forEach((name) => {
       const input = this.formFields[name];
       if (!input.error) {
@@ -226,9 +232,9 @@ class HandleFieldsList<FormType> {
   };
 
   private _testErrorAndReturnData = async (
-    name: string,
+    name: Name<FormData>,
     errorCallback: () => void,
-  ): Promise<FormFullData<FormType>> => {
+  ): Promise<FormData[typeof name]> => {
     const errorMessage = await this.testFieldError(name, true);
     if (errorMessage) {
       errorCallback();
@@ -237,7 +243,7 @@ class HandleFieldsList<FormType> {
   };
 
   testFieldError = async (
-    name: string,
+    name: Name<FormData>,
     shouldUpdateInput: boolean,
   ): Promise<ErrorMessageType> => {
     return await this.treatUpdateField(name, this.formFields, () => {
@@ -247,10 +253,10 @@ class HandleFieldsList<FormType> {
 
   testErrorsAndReturnData = async (): Promise<{
     hasError: boolean;
-    data: FormFullData<FormType>;
+    data: FormData;
   }> => {
     let hasError = false;
-    const data: FormFullData<FormType> = {};
+    const data = {} as FormData;
 
     await Promise.all(
       this.fieldNames.map(async (name) => {

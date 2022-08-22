@@ -8,15 +8,15 @@ import {
 
 import FormFullHandler from "../FormFullHandler";
 
-export default class FieldHandler<FormType> {
+export default class FieldHandler<FormData> {
   value: any;
-  maskToSubmit?: MaskType<FormType>;
+  maskToSubmit?: MaskType<FormData>;
   error: boolean = false;
 
   private defaultValue: any;
   private required: ErrorMessageType;
-  private mask?: MaskType<FormType>;
-  private validation?: ValidationType<FormType> | ValidationType<FormType>[];
+  private mask?: MaskType<FormData>;
+  private validations?: ValidationType<FormData>[];
   private ref: FieldRef;
 
   handleValue: (value: any) => void;
@@ -26,7 +26,7 @@ export default class FieldHandler<FormType> {
   private validHandler: (valid: boolean) => void;
   private setLoading: (loading: boolean) => void;
 
-  private ffHandler: FormFullHandler<FormType>;
+  private ffHandler: FormFullHandler<FormData>;
 
   constructor({
     value,
@@ -34,7 +34,7 @@ export default class FieldHandler<FormType> {
     required,
     mask,
     maskToSubmit,
-    validation,
+    validations,
     errorHandler,
     validHandler,
     handleValue,
@@ -42,13 +42,13 @@ export default class FieldHandler<FormType> {
     disableHandler,
     ref,
     ffHandler,
-  }: FieldHandlerParams<FormType>) {
+  }: FieldHandlerParams<FormData>) {
     this.value = value;
     this.defaultValue = defaultValue;
     this.required = required;
     this.mask = mask;
     this.maskToSubmit = maskToSubmit;
-    this.validation = validation;
+    this.validations = validations;
     this.errorHandler = errorHandler;
     this.validHandler = validHandler;
     this.handleValue = handleValue;
@@ -70,18 +70,16 @@ export default class FieldHandler<FormType> {
     this.defaultValue = defaultValue;
   };
 
-  setMask = (mask: MaskType<FormType>): void => {
-    this.mask = mask;
+  setMask = (mask?: MaskType<FormData>): void => {
+    this.mask = mask ?? undefined;
   };
 
-  setMaskToSubmit = (maskToSubmit: MaskType<FormType>): void => {
+  setMaskToSubmit = (maskToSubmit?: MaskType<FormData>): void => {
     this.maskToSubmit = maskToSubmit;
   };
 
-  setValidation = (
-    validation: ValidationType<FormType> | ValidationType<FormType>[],
-  ): void => {
-    this.validation = validation;
+  setValidations = (validations?: ValidationType<FormData>[]): void => {
+    this.validations = validations;
   };
 
   setValue = (newValue: any): void => {
@@ -125,17 +123,14 @@ export default class FieldHandler<FormType> {
   }
 
   private async _getErrorMessage(value: any): Promise<ErrorMessageType> {
-    if (this.validation) {
-      if (Array.isArray(this.validation)) {
-        let message = null;
-        this.validation!.some((_validation) => {
-          const _message = _validation(value, this.ffHandler);
-          message = _message;
-          if (message) return true;
-          return false;
-        });
-        return message;
-      }
+    if (this.validations) {
+      const results = await Promise.all(
+        this.validations.map((validation) => validation(value, this.ffHandler)),
+      );
+      const message = results.find((message) => {
+        return Boolean(message);
+      });
+      return message ?? null;
     }
     return null;
   }
@@ -144,7 +139,7 @@ export default class FieldHandler<FormType> {
     const maskedValue = this._getMaskedValue();
     const hasValue = Boolean(maskedValue) || maskedValue === 0;
     if (hasValue) {
-      if (this.validation) {
+      if (this.validations) {
         this.setLoading(true);
         const errorMessage = await this._getErrorMessage(maskedValue);
         this.setLoading(false);

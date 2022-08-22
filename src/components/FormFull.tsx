@@ -3,14 +3,14 @@ import { useConstructor } from "../hooks/useConstructor";
 import FormFullHandler from "../classes/FormFullHandler";
 import { FormFullProps } from "./FormFull-types";
 
-export const FormContext = React.createContext<FormFullHandler<unknown>>(
-  {} as FormFullHandler<unknown>,
+export const FormContext = React.createContext<FormFullHandler<any>>(
+  {} as FormFullHandler<any>,
 );
 
-function FormFull<FormType>(props: FormFullProps<FormType>): JSX.Element {
-  const ffHandler = React.useRef<FormFullHandler<FormType>>();
+function FormFull<FormData>(props: FormFullProps<FormData>): JSX.Element {
+  const ffHandler = React.useRef<FormFullHandler<FormData>>();
   useConstructor(() => {
-    ffHandler.current = new FormFullHandler<FormType>({
+    ffHandler.current = new FormFullHandler<FormData>({
       onSubmit: props.onSubmit,
       clearOnSubmit: props.clearOnSubmit,
       submitOnClear: props.submitOnClear,
@@ -28,7 +28,9 @@ function FormFull<FormType>(props: FormFullProps<FormType>): JSX.Element {
   });
 
   React.useEffect(() => {
-    ffHandler.current?.setCurrentValues(props.currentValues ?? {});
+    ffHandler.current?.setCurrentValues(
+      props.currentValues ?? ({} as FormData),
+    );
   }, [props.currentValues]);
 
   React.useEffect(() => {
@@ -37,7 +39,7 @@ function FormFull<FormType>(props: FormFullProps<FormType>): JSX.Element {
 
   return (
     <FormContext.Provider
-      value={ffHandler.current as FormFullHandler<FormType>}>
+      value={ffHandler.current as FormFullHandler<FormData>}>
       {props.children}
     </FormContext.Provider>
   );

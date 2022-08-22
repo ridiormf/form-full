@@ -8,17 +8,17 @@ import {
   ValidationType,
   MaskType,
 } from "./fieldController/FieldHandler-types";
-import { FormFullData, FormFullHandlerParams } from "./FormFullHandler-types";
+import { FormFullHandlerParams, Name } from "./FormFullHandler-types";
 
-export default class FormFullHandler<FormType> {
-  onSubmit: (data: FormFullData<FormType>) => void;
+export default class FormFullHandler<FormData> {
+  onSubmit: (data: Partial<FormData>) => void;
   onChange?: () => void;
   clearOnSubmit: boolean;
   submitOnClear: boolean;
   disabled: boolean;
 
   formButtonsHandler: HandleButtonsList;
-  formFieldsHandler: HandleFieldsList<FormType>;
+  formFieldsHandler: HandleFieldsList<FormData>;
 
   constructor({
     onSubmit,
@@ -26,7 +26,7 @@ export default class FormFullHandler<FormType> {
     submitOnClear,
     onChange,
     disabled,
-  }: FormFullHandlerParams) {
+  }: FormFullHandlerParams<FormData>) {
     this.onSubmit = onSubmit;
     this.onChange = onChange;
     this.clearOnSubmit = clearOnSubmit ?? false;
@@ -34,9 +34,7 @@ export default class FormFullHandler<FormType> {
     this.disabled = disabled ?? false;
 
     this.formButtonsHandler = new HandleButtonsList();
-    this.formFieldsHandler = new HandleFieldsList(
-      this as FormFullHandler<FormType>,
-    );
+    this.formFieldsHandler = new HandleFieldsList(this);
   }
 
   static handleError = {
@@ -47,24 +45,24 @@ export default class FormFullHandler<FormType> {
   };
 
   setNewField = (
-    name: string,
-    fieldParams: FieldHandlerParams<FormType>,
+    name: Name<FormData>,
+    fieldParams: FieldHandlerParams<FormData>,
   ): void => {
     this.formFieldsHandler.setNewField(name, fieldParams);
   };
 
-  removeField = (name: string): void => {
+  removeField = (name: Name<FormData>): void => {
     this.formFieldsHandler.removeField(name);
   };
 
-  setNewButton = (name: string, buttonParams: ButtonHandlerParams) => {
+  setNewButton = (name: Name<FormData>, buttonParams: ButtonHandlerParams) => {
     this.formButtonsHandler.setNewButton(name, buttonParams);
   };
-  removeButton = (name: string): void => {
+  removeButton = (name: Name<FormData>): void => {
     this.formButtonsHandler.removeButton(name);
   };
 
-  setCurrentValues = (currentValues: FormFullData<FormType>): void => {
+  setCurrentValues = (currentValues: Partial<FormData>): void => {
     this.formFieldsHandler.setCurrentValues(currentValues);
   };
 
@@ -78,78 +76,79 @@ export default class FormFullHandler<FormType> {
     this.formButtonsHandler.setButtonsDisabled(disabled);
   };
 
-  setFieldRequired = (name: string, required: ErrorMessageType): void => {
+  setFieldRequired = (
+    name: Name<FormData>,
+    required: ErrorMessageType,
+  ): void => {
     this.formFieldsHandler.setFieldRequired(name, required);
   };
-  setFieldDefaultValue = (name: string, defaultValue: any): void => {
+  setFieldDefaultValue = (name: Name<FormData>, defaultValue: any): void => {
     this.formFieldsHandler.setFieldDefaultValue(name, defaultValue);
   };
-  setFieldMask = (name: string, mask: MaskType<FormType>): void => {
+  setFieldMask = (name: Name<FormData>, mask?: MaskType<FormData>): void => {
     this.formFieldsHandler.setFieldMask(name, mask);
   };
   setFieldMaskToSubmit = (
-    name: string,
-    maskToSubmit: MaskType<FormType>,
+    name: Name<FormData>,
+    maskToSubmit?: MaskType<FormData>,
   ): void => {
     this.formFieldsHandler.setFieldMaskToSubmit(name, maskToSubmit);
   };
-  setFieldValidation = (
-    name: string,
-    validation: ValidationType<FormType> | ValidationType<FormType>[],
+  setFieldValidations = (
+    name: Name<FormData>,
+    validations?: ValidationType<FormData>[],
   ): void => {
-    this.formFieldsHandler.setFieldValidation(name, validation);
+    this.formFieldsHandler.setFieldValidations(name, validations);
   };
 
-  getFieldRef = (name: string): FieldRef => {
+  getFieldRef = (name: Name<FormData>): FieldRef => {
     return this.formFieldsHandler.getFieldRef(name);
   };
 
-  setValue = (name: string, value: any): void => {
+  setValue = (name: Name<FormData>, value: any): void => {
     this.formFieldsHandler.setValue(name, value);
   };
 
-  setFormValue = (name: string, value: any): void => {
+  setFormValue = (name: Name<FormData>, value: any): void => {
     this.formFieldsHandler.setFormValue(name, value);
     if (this.onChange) {
       this.onChange();
     }
   };
 
-  clearValue = (name: string, setDefault: boolean = true): void => {
+  clearValue = (name: Name<FormData>, setDefault: boolean = true): void => {
     this.formFieldsHandler.clearValue(name, setDefault);
   };
 
-  getValue = (name: string, withMaskToSubmit: boolean): any => {
+  getValue = (name: Name<FormData>, withMaskToSubmit: boolean): any => {
     return this.formFieldsHandler.getValue(name, withMaskToSubmit);
   };
 
-  getActualValue = (name: string): any => {
+  getActualValue = (name: Name<FormData>): any => {
     return this.formFieldsHandler.getActualValue(name);
   };
 
-  getValues = (): FormFullData<FormType> => {
+  getValues = (): Partial<FormData> => {
     return this.formFieldsHandler.getValues();
   };
 
-  setFieldFocus = (name: string): void => {
+  setFieldFocus = (name: Name<FormData>): void => {
     this.formFieldsHandler.setFieldFocus(name);
   };
 
-  getValidValues = (
-    valuesWithMaskToSubmit: boolean,
-  ): FormFullData<FormType> => {
+  getValidValues = (valuesWithMaskToSubmit: boolean): Partial<FormData> => {
     return this.formFieldsHandler.getValidValues(valuesWithMaskToSubmit);
   };
 
   testErrorsAndReturnData = async (): Promise<{
     hasError: boolean;
-    data: FormFullData<FormType>;
+    data: Partial<FormData>;
   }> => {
     return this.formFieldsHandler.testErrorsAndReturnData();
   };
 
   testFieldError = async (
-    name: string,
+    name: Name<FormData>,
     shouldUpdateInput: boolean = true,
   ): Promise<ErrorMessageType> => {
     return await this.formFieldsHandler.testFieldError(name, shouldUpdateInput);
@@ -162,7 +161,10 @@ export default class FormFullHandler<FormType> {
     }
   };
 
-  clearSpecificFields = (names: string[], setDefault: boolean = true) => {
+  clearSpecificFields = (
+    names: Name<FormData>[],
+    setDefault: boolean = true,
+  ) => {
     this.formFieldsHandler.clearSpecificFields(names, setDefault);
   };
 

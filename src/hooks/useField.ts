@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import { FormContext } from "../components/FormFull";
 import {
@@ -11,9 +10,9 @@ import {
 } from "../classes/fieldController/FieldHandler-types";
 import FormFullHandler from "../classes/FormFullHandler";
 
-export default function useField<FormType>(
-  props: FieldProps<FormType>,
-): FieldConnector<FormType> {
+export default function useField<FormData>(
+  props: FieldProps<FormData>,
+): FieldConnector<FormData> {
   const getInitialStringValue = React.useCallback((): any => {
     const { defaultValue = "", mask } = props;
     const value = defaultValue;
@@ -28,34 +27,31 @@ export default function useField<FormType>(
   const [error, setError] = React.useState<ErrorMessageType>("");
   const [valid, setValid] = React.useState(false);
   const ref = React.useRef<FieldRef>();
-  const ffHandler = React.useContext<FormFullHandler<FormType>>(FormContext);
+  const ffHandler = React.useContext<FormFullHandler<FormData>>(FormContext);
   const [formDisabled, setFormDisabled] = React.useState<boolean>(
-    !!ffHandler?.getDisabledForm(),
+    ffHandler.getDisabledForm(),
   );
 
-  const setValueWithoutOnChangeString = React.useCallback(
-    (value = "") => {
-      const { maxLength, mask, name } = props;
-      let maxLengthValue = value;
-      if (maxLength && (value !== null || value !== undefined)) {
-        maxLengthValue = String(value).substring(0, maxLength);
-      }
-      const resultedValue = mask
-        ? mask(maxLengthValue, ffHandler)
-        : maxLengthValue;
-      ffHandler?.setFormValue(name, resultedValue);
-      setStateValue(resultedValue);
-      setValid(false);
-    },
-    [ffHandler, props],
-  );
+  const setValueWithoutOnChangeString = (value = "") => {
+    const { maxLength, mask, name } = props;
+    let maxLengthValue = value;
+    if (maxLength && (value !== null || value !== undefined)) {
+      maxLengthValue = String(value).substring(0, maxLength);
+    }
+    const resultedValue = mask
+      ? mask(maxLengthValue, ffHandler)
+      : maxLengthValue;
+    ffHandler.setFormValue(name, resultedValue);
+    setStateValue(resultedValue);
+    setValid(false);
+  };
 
   function onBlur(event: any): void {
     setTimeout(() => {
       if (props.submitOnBlur) {
-        ffHandler?.submit();
+        ffHandler.submit();
       } else {
-        ffHandler?.testFieldError(props.name);
+        ffHandler.testFieldError(props.name);
       }
       if (props.onBlur) {
         props.onBlur(value, ffHandler, event);
@@ -65,23 +61,19 @@ export default function useField<FormType>(
 
   function testFieldError(): void {
     setTimeout(() => {
-      ffHandler?.testFieldError(props.name);
+      ffHandler.testFieldError(props.name);
     }, 10);
   }
 
-  const onChange = React.useCallback(
-    (event: any | undefined | null, value: any) => {
-      setValueWithoutOnChangeString(value);
+  const onChange = (event: any | undefined | null, value: any) => {
+    setValueWithoutOnChangeString(value);
+    if (props.onChange) {
+      props.onChange(value, ffHandler, event);
+    }
+  };
 
-      if (props.onChange) {
-        props.onChange(value, ffHandler, event);
-      }
-    },
-    [ffHandler, props, setValueWithoutOnChangeString],
-  );
-
-  const mount = React.useCallback(() => {
-    ffHandler?.setNewField(props.name, {
+  React.useEffect(() => {
+    ffHandler.setNewField(props.name, {
       ref: ref.current,
       errorHandler: (error: ErrorMessageType) => setError(error),
       validHandler: (valid: boolean) => setValid(valid),
@@ -92,34 +84,41 @@ export default function useField<FormType>(
       defaultValue: props.defaultValue,
       mask: props.mask,
       maskToSubmit: props.maskToSubmit,
-      validation: props.validation,
+      validations: props.validations,
       required: props.required,
       ffHandler,
     });
     return () => {
-      ffHandler?.removeField(props.name);
+      ffHandler.removeField(props.name);
     };
-  }, [
-    ffHandler,
-    props,
-    setError,
-    setValid,
-    setFormLoading,
-    setFormDisabled,
-    ref,
-    value,
-    onChange,
-  ]);
+  }, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
-  React.useEffect(mount, []);
+  const { required, mask, validations, defaultValue, maskToSubmit } = props;
 
-  React.useEffect(() => {
-    ffHandler?.setFieldRequired(props.name, props.required);
-  }, [props, ffHandler]);
+  React.useEffect(
+    () => ffHandler.setFieldRequired(props.name, required),
+    [required],
+  );
+
+  React.useEffect(() => ffHandler.setFieldMask(props.name, mask), [mask]);
+
+  React.useEffect(
+    () => ffHandler.setFieldValidations(props.name, validations),
+    [validations],
+  );
+
+  React.useEffect(
+    () => ffHandler.setFieldDefaultValue(props.name, defaultValue),
+    [validations],
+  );
+  React.useEffect(
+    () => ffHandler.setFieldMaskToSubmit(props.name, maskToSubmit),
+    [validations],
+  );
 
   function onSubmit(event: any): void {
     if (!event?.shiftKey && event?.charCode === 13) {
-      ffHandler?.submit();
+      ffHandler.submit();
     }
   }
 

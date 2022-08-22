@@ -1,9 +1,7 @@
-export type FormFullData<FormType> =
-  | Partial<FormType>
-  | { [key in string]: any };
+export type Name<FormData> = Extract<keyof FormData, string>;
 
-export type FormFullHandlerParams = {
-  onSubmit: <FormType>(data: FormFullData<FormType>) => void;
+export type FormFullHandlerParams<FormData> = {
+  onSubmit: (data: Partial<FormData>) => void;
   clearOnSubmit?: boolean;
   submitOnClear?: boolean;
   onChange?: () => void;

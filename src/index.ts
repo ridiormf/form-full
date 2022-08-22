@@ -3,10 +3,7 @@ export { default as useFormFull } from "./connector";
 
 export type { default as FormFullHandler } from "./classes/FormFullHandler";
 
-export type {
-  FormFullHandlerParams,
-  FormFullData,
-} from "./classes/FormFullHandler-types";
+export type { FormFullHandlerParams } from "./classes/FormFullHandler-types";
 
 export type { ButtonProps } from "./classes/buttonController/ButtonHandler-types";
 export type {

@@ -32,7 +32,7 @@ Hook that will connect a new value input component (`TextField`, `RadioButton`, 
 Hook that will connect a new action component (`Buttons` and components that use `onClick` and need to interact with the form)
 
 [Handler Methods documentation](#custom_anchor_name) _// In process of development_
-Class that manages all form behavior (Accessible by saving with the `formRef` of the `FormFull` component or in calls like `onChange` and `onBlur` of the input or field validations (`validation` or `asyncValidation`).
+Class that manages all form behavior (Accessible by saving with the `formRef` of the `FormFull` component or in calls like `onChange` and `onBlur` of the input or field validations.
 
 You can preview using the form and how to create `form-full` components in this interactive demo:
 [![Edit Button](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/tsxir)
@@ -231,19 +231,18 @@ Hook used to connect a **field** component to be controlled by `form-full`
 
 Receives an object as a parameter with the properties:
 
-| Name            | Type   | Required | Description                                                                                                                                                                                                        |
-| --------------- | ------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| asyncValidation | func   | no       | used to validate input asynchronously (such as validating the existence of the username in a registration). **Important**: Like `validation`, need to return a string (if invalid) or null / undefined (if valid). |
-| defaultValue    | any    | no       | Default field value. Value the component starts when it is first rendered                                                                                                                                          |
-| mask            | func   | no       | Function to format the end-user visible value                                                                                                                                                                      |
-| maskToSubmit    | func   | no       | Function to treat value when the form is submitted, converting it to the most suitable value for the developer                                                                                                     |
-| maxLength       | number | no       | Limits the number of characters in the field. It is a native parameter, but `form-full` also uses it                                                                                                               |
-| name            | string | `yes`    | Field name to be managed by the form. When the form is submitted the value will be inserted in a key of this name                                                                                                  |
-| onBlur          | func   | no       | Function that will be called when the input loses focus. It is necessary to pass to `useFormFull.field` and not use it directly in the field                                                                       |
-| onChange        | func   | no       | Function that will be called when the input value changes. It is necessary to pass to `useFormFull.field` and not use it directly in the field                                                                     |
-| required        | string | no       | Error message that defines the field as required. It will be shown whenever the field validation is called and only if it is not filled.                                                                           |
-| submitOnBlur    | bool   | no       | If`true`is passed the form will be submitted when field loses focus.                                                                                                                                               |
-| validation      | func   | no       | Used to validate input. **Important**: Like`asyncValidation`, need to return a string (if invalid) or null / undefined (if valid).                                                                                 |
+| Name         | Type                  | Required | Description                                                                                                                                               |
+| ------------ | --------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| defaultValue | any                   | no       | Default field value. Value the component starts when it is first rendered                                                                                 |
+| mask         | func                  | no       | Function to format the end-user visible value                                                                                                             |
+| maskToSubmit | func                  | no       | Function to treat value when the form is submitted, converting it to the most suitable value for the developer                                            |
+| maxLength    | number                | no       | Limits the number of characters in the field. It is a native parameter, but `form-full` also uses it                                                      |
+| name         | string                | `yes`    | Field name to be managed by the form. When the form is submitted the value will be inserted in a key of this name                                         |
+| onBlur       | func                  | no       | Function that will be called when the input loses focus. It is necessary to pass to `useFormFull.field` and not use it directly in the field              |
+| onChange     | func                  | no       | Function that will be called when the input value changes. It is necessary to pass to `useFormFull.field` and not use it directly in the field            |
+| required     | string                | no       | Error message that defines the field as required. It will be shown whenever the field validations is called and only if it is not filled.                 |
+| submitOnBlur | bool                  | no       | If`true`is passed the form will be submitted when field loses focus.                                                                                      |
+| validations  | Array<func / promise> | no       | Used to validate input. **Important**: Each function need to return a string (if invalid) or null / undefined (if valid) and can either return a promise. |
 
 Returns an object with properties:
 
@@ -257,7 +256,7 @@ Returns an object with properties:
 | onChange       | func                   | Controls the change of field value. receives the event change as the first parameter and the new value as the second. the event is not used internally, it is passed on for external use only, if necessary. |
 | onSubmit       | func                   | Controls the submission of the form from an action in the field: `onKeyPress={onSubmit}` (React JS) or `onSubmitEditing={onSubmit}` (React Native)                                                           |
 | ref            | React.MutableRefObject | React ref to control field focus when get validation error                                                                                                                                                   |
-| testFieldError | func                   | Function to call field validation. **Important**: Used only when the field does not have the `onBlur` listener and don't use the `onBlur` that the `useFormFull.field` returns                               |
+| testFieldError | func                   | Function to call field validations. **Important**: Used only when the field does not have the `onBlur` listener and don't use the `onBlur` that the `useFormFull.field` returns                              |
 | valid          | bool                   | Controls whether the field is valid. Used to provide visual feedback when the field is filled in correctly                                                                                                   |
 | value          | any                    | Value saved in the form. Example: `value={value}`                                                                                                                                                            |
 

@@ -1,13 +1,12 @@
-import { FormFullData } from "..";
 import FormFullHandler from "../classes/FormFullHandler";
 
-export type FormFullProps<T> = {
-  onSubmit: (data: FormFullData<T>) => void;
+export type FormFullProps<FormData> = {
+  onSubmit: (data: FormData) => void;
   clearOnSubmit?: boolean;
   submitOnClear?: boolean;
   onChange?: () => void;
-  formRef?: (ref: FormFullHandler<T>) => void;
+  formRef?: (ref: FormFullHandler<FormData>) => void;
   children: React.ReactNode;
-  currentValues?: FormFullData<T>;
+  currentValues?: Partial<FormData>;
   disabled?: boolean;
 };
