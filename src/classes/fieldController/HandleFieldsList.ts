@@ -11,8 +11,8 @@ import FieldHandler from "./FieldHandler";
 import { Name } from "../FormFullHandler-types";
 import { throwError } from "../../utils/errors";
 
-class HandleFieldsList<FormData> {
-  private formFields: Fields<FormData> = {};
+class HandleFieldsList<FormData extends any> {
+  private formFields: Fields<unknown, FormData> = {};
   private fieldNames: Name<FormData>[] = [];
   private currentValues = {} as Partial<FormData>;
   private ffHandler: FormFullHandler<FormData>;
@@ -39,7 +39,7 @@ class HandleFieldsList<FormData> {
 
   private treatUpdateField = (
     name: Name<FormData>,
-    formFields: Fields<FormData>,
+    formFields: Fields<unknown, FormData>,
     callback: () => any,
   ) => {
     if (typeof name !== "string") {
@@ -53,7 +53,7 @@ class HandleFieldsList<FormData> {
 
   setNewField = (
     name: Name<FormData>,
-    fieldParams: FieldHandlerParams<FormData>,
+    fieldParams: FieldHandlerParams<unknown, FormData>,
   ): void => {
     if (typeof name !== "string") {
       HandleFieldsList.invalidNameError(name);
@@ -81,7 +81,7 @@ class HandleFieldsList<FormData> {
     if (currentValues) {
       this.fieldNames.forEach((name) => {
         if (currentValues[name] !== this.currentValues[name]) {
-          this.setValue(name, currentValues[name] ?? "");
+          this.setValue(name, currentValues[name]);
         }
       });
       this.currentValues = currentValues;
@@ -111,14 +111,17 @@ class HandleFieldsList<FormData> {
     });
   };
 
-  setFieldMask = (name: Name<FormData>, mask?: MaskType<FormData>): void => {
+  setFieldMask = (
+    name: Name<FormData>,
+    mask?: MaskType<unknown, FormData>,
+  ): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setMask(mask);
     });
   };
   setFieldMaskToSubmit = (
     name: Name<FormData>,
-    maskToSubmit?: MaskType<FormData>,
+    maskToSubmit?: MaskType<unknown, FormData>,
   ): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setMaskToSubmit(maskToSubmit);
@@ -126,7 +129,7 @@ class HandleFieldsList<FormData> {
   };
   setFieldValidations = (
     name: Name<FormData>,
-    validations?: ValidationType<FormData>[],
+    validations?: ValidationType<unknown, FormData>[],
   ): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].setValidations(validations);
@@ -139,7 +142,7 @@ class HandleFieldsList<FormData> {
     });
   };
 
-  setValue = (name: Name<FormData>, value: any): void => {
+  setValue = (name: Name<FormData>, value?: any): void => {
     this.treatUpdateField(name, this.formFields, () => {
       this.formFields[name].handleValue(value);
     });

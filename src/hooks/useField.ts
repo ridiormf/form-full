@@ -9,44 +9,57 @@ import {
   FieldRef,
 } from "../classes/fieldController/FieldHandler-types";
 import FormFullHandler from "../classes/FormFullHandler";
+import { Name } from "../classes/FormFullHandler-types";
 
-export default function useField<FormData>(
-  props: FieldProps<FormData>,
-): FieldConnector<FormData> {
+export default function useField<
+  ValueType extends unknown,
+  FormData extends unknown,
+  FieldName extends Name<FormData> = Name<FormData>,
+>(
+  props: FieldProps<ValueType, FormData, FieldName>,
+): FieldConnector<ValueType, FormData> {
+  const ffHandler = React.useContext<FormFullHandler<FormData>>(FormContext);
+
   const getInitialStringValue = React.useCallback((): any => {
-    const { defaultValue = "", mask } = props;
+    const { defaultValue, mask } = props;
     const value = defaultValue;
-    const finalValue = mask ? mask(value, ffHandler) : value;
+    const finalValue = mask && value != null ? mask(value, ffHandler) : value;
     return finalValue;
   }, [props]);
 
   const initialValue = getInitialStringValue();
 
-  const [value, setStateValue] = React.useState(initialValue);
+  const [value, setStateValue] = React.useState<ValueType>(initialValue);
   const [formLoading, setFormLoading] = React.useState(false);
   const [error, setError] = React.useState<ErrorMessageType>("");
   const [valid, setValid] = React.useState(false);
   const ref = React.useRef<FieldRef>();
-  const ffHandler = React.useContext<FormFullHandler<FormData>>(FormContext);
+
   const [formDisabled, setFormDisabled] = React.useState<boolean>(
     ffHandler.getDisabledForm(),
   );
 
-  const setValueWithoutOnChangeString = (value = "") => {
+  const setValueWithoutOnChangeString = (value: ValueType) => {
     const { maxLength, mask, name } = props;
-    let maxLengthValue = value;
-    if (maxLength && (value !== null || value !== undefined)) {
+    let maxLengthValue: any = value;
+
+    const itCanBeString =
+      typeof value === "string" || typeof value === "number";
+
+    if (itCanBeString && maxLength && (value !== null || value !== undefined)) {
       maxLengthValue = String(value).substring(0, maxLength);
     }
-    const resultedValue = mask
-      ? mask(maxLengthValue, ffHandler)
-      : maxLengthValue;
+    const resultedValue =
+      mask && maxLengthValue != null
+        ? mask(maxLengthValue, ffHandler)
+        : maxLengthValue;
+
     ffHandler.setFormValue(name, resultedValue);
     setStateValue(resultedValue);
     setValid(false);
   };
 
-  function onBlur(event: any): void {
+  function onBlur<EventType extends any>(event: EventType): void {
     setTimeout(() => {
       if (props.submitOnBlur) {
         ffHandler.submit();
@@ -54,7 +67,7 @@ export default function useField<FormData>(
         ffHandler.testFieldError(props.name);
       }
       if (props.onBlur) {
-        props.onBlur(value, ffHandler, event);
+        props.onBlur({ value, form: ffHandler, event, isValid: !!error });
       }
     }, 10);
   }
@@ -65,10 +78,18 @@ export default function useField<FormData>(
     }, 10);
   }
 
-  const onChange = (event: any | undefined | null, value: any) => {
+  const onChange = <EventType extends any>(
+    event: EventType,
+    value: ValueType,
+  ) => {
     setValueWithoutOnChangeString(value);
     if (props.onChange) {
-      props.onChange(value, ffHandler, event);
+      props.onChange({
+        value,
+        form: ffHandler,
+        event,
+        isValid: !!error,
+      });
     }
   };
 
@@ -77,7 +98,7 @@ export default function useField<FormData>(
       ref: ref.current,
       errorHandler: (error: ErrorMessageType) => setError(error),
       validHandler: (valid: boolean) => setValid(valid),
-      handleValue: (value) => onChange(null, value),
+      handleValue: (value) => onChange(null, value as ValueType),
       setLoading: (loading: boolean) => setFormLoading(loading),
       disableHandler: (disabled: boolean) => setFormDisabled(disabled),
       value,

@@ -8,18 +8,18 @@ import {
 
 import FormFullHandler from "../FormFullHandler";
 
-export default class FieldHandler<FormData> {
-  value: any;
-  maskToSubmit?: MaskType<FormData>;
+export default class FieldHandler<ValueType extends any, FormData extends any> {
+  value?: ValueType;
+  maskToSubmit?: MaskType<ValueType, FormData>;
   error: boolean = false;
 
-  private defaultValue: any;
+  private defaultValue?: ValueType;
   private required: ErrorMessageType;
-  private mask?: MaskType<FormData>;
-  private validations?: ValidationType<FormData>[];
+  private mask?: MaskType<ValueType, FormData>;
+  private validations?: ValidationType<ValueType, FormData>[];
   private ref: FieldRef;
 
-  handleValue: (value: any) => void;
+  handleValue: (value?: ValueType) => void;
   disableHandler: (disabled: boolean) => void;
 
   private errorHandler: (error: ErrorMessageType) => void;
@@ -42,7 +42,7 @@ export default class FieldHandler<FormData> {
     disableHandler,
     ref,
     ffHandler,
-  }: FieldHandlerParams<FormData>) {
+  }: FieldHandlerParams<ValueType, FormData>) {
     this.value = value;
     this.defaultValue = defaultValue;
     this.required = required;
@@ -66,23 +66,25 @@ export default class FieldHandler<FormData> {
     this.required = required;
   };
 
-  setDefaultValue = (defaultValue: any): void => {
+  setDefaultValue = (defaultValue: ValueType): void => {
     this.defaultValue = defaultValue;
   };
 
-  setMask = (mask?: MaskType<FormData>): void => {
+  setMask = (mask?: MaskType<ValueType, FormData>): void => {
     this.mask = mask ?? undefined;
   };
 
-  setMaskToSubmit = (maskToSubmit?: MaskType<FormData>): void => {
+  setMaskToSubmit = (maskToSubmit?: MaskType<ValueType, FormData>): void => {
     this.maskToSubmit = maskToSubmit;
   };
 
-  setValidations = (validations?: ValidationType<FormData>[]): void => {
-    this.validations = validations;
+  setValidations = (
+    validations?: ValidationType<ValueType, FormData>[],
+  ): void => {
+    this.validations = validations ?? undefined;
   };
 
-  setValue = (newValue: any): void => {
+  setValue = (newValue: ValueType): void => {
     this.value = newValue;
   };
 
@@ -91,7 +93,7 @@ export default class FieldHandler<FormData> {
   };
 
   private _clearValue = (): void => {
-    this.handleValue("");
+    this.handleValue(undefined);
   };
 
   private _setValueToDefault = (): void => {
@@ -107,7 +109,7 @@ export default class FieldHandler<FormData> {
   };
 
   getFormattedValueToSubmit = (): any => {
-    let fixedValue = this.value;
+    let fixedValue = this.value as any;
     if (typeof this.value === "string") {
       fixedValue = this.value.trim();
     } else if (typeof this.value === "number") {
@@ -119,10 +121,12 @@ export default class FieldHandler<FormData> {
   };
 
   private _getMaskedValue(): any {
-    return this.mask ? this.mask(this.value, this.ffHandler) : this.value;
+    return this.mask && this.value != null
+      ? this.mask(this.value, this.ffHandler)
+      : this.value;
   }
 
-  private async _getErrorMessage(value: any): Promise<ErrorMessageType> {
+  private async _getErrorMessage(value: ValueType): Promise<ErrorMessageType> {
     if (this.validations) {
       const results = await Promise.all(
         this.validations.map((validation) => validation(value, this.ffHandler)),
@@ -138,7 +142,7 @@ export default class FieldHandler<FormData> {
   validate = async (shouldUpdateInput: boolean): Promise<ErrorMessageType> => {
     const maskedValue = this._getMaskedValue();
     const hasValue = Boolean(maskedValue) || maskedValue === 0;
-    if (hasValue) {
+    if (maskedValue) {
       if (this.validations) {
         this.setLoading(true);
         const errorMessage = await this._getErrorMessage(maskedValue);

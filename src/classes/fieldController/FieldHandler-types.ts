@@ -2,31 +2,34 @@ import FormFullHandler from "../FormFullHandler";
 import { Name } from "../FormFullHandler-types";
 
 export type ErrorMessageType = string | null | undefined;
-export type MaskType<FormData> = (
-  value: any,
+export type MaskType<ValueType extends any, FormData extends any> = (
+  value: ValueType | undefined,
   ffHandler: FormFullHandler<FormData>,
 ) => any;
 
-export type ValidationType<FormData> = (
-  value: any,
+export type ValidationType<ValueType extends any, FormData extends any> = (
+  value: ValueType | undefined,
   ffHandler: FormFullHandler<FormData>,
 ) => ErrorMessageType | Promise<ErrorMessageType>;
 
 export type FieldRef = any;
 
-export interface FieldHandlerParams<FormData> {
-  value?: any;
-  defaultValue?: any;
+export interface FieldHandlerParams<
+  ValueType extends any,
+  FormData extends any,
+> {
+  value?: ValueType;
+  defaultValue?: ValueType;
 
   required?: ErrorMessageType;
 
-  mask?: MaskType<FormData>;
-  maskToSubmit?: MaskType<FormData>;
-  validations?: ValidationType<FormData>[];
+  mask?: MaskType<ValueType, FormData>;
+  maskToSubmit?: MaskType<ValueType, FormData>;
+  validations?: ValidationType<ValueType, FormData>[];
 
   errorHandler: (error: ErrorMessageType) => void;
   validHandler: (valid: boolean) => void;
-  handleValue: (value: any) => void;
+  handleValue: (value: ValueType) => void;
   setLoading: (loading: boolean) => void;
   disableHandler: (disabled: boolean) => void;
 
@@ -35,35 +38,40 @@ export interface FieldHandlerParams<FormData> {
   ffHandler: FormFullHandler<FormData>;
 }
 
-export interface FieldProps<FormData>
-  extends Pick<
-    FieldHandlerParams<FormData>,
+export interface FieldProps<
+  ValueType extends any,
+  FormData extends any,
+  FieldName extends Name<FormData> = Name<FormData>,
+> extends Pick<
+    FieldHandlerParams<ValueType, FormData>,
     "mask" | "maskToSubmit" | "validations" | "required" | "defaultValue"
   > {
-  name: Name<FormData>;
+  name: FieldName;
   maxLength?: number;
-  onChange?: <ValueType, EventType>(
-    value: ValueType,
-    ffHandler: FormFullHandler<FormData>,
-    event?: EventType,
-  ) => void;
-  onBlur?: <ValueType, EventType>(
-    value: ValueType,
-    ffHandler: FormFullHandler<FormData>,
-    event?: EventType,
-  ) => void;
+  onChange?: <EventType extends any>(context: {
+    value: ValueType;
+    form: FormFullHandler<FormData>;
+    isValid: boolean;
+    event?: EventType;
+  }) => void;
+  onBlur?: <EventType extends any>(context: {
+    value: ValueType;
+    form: FormFullHandler<FormData>;
+    isValid: boolean;
+    event?: EventType;
+  }) => void;
   submitOnBlur?: boolean;
 }
 
-export interface FieldConnector<FormData> {
-  value: any;
+export interface FieldConnector<ValueType extends any, FormData extends any> {
+  value: ValueType;
   error: ErrorMessageType;
   valid: boolean;
   formLoading: boolean;
   formDisabled: boolean;
   onSubmit: <EventType>(event: EventType) => void;
   onBlur: <EventType>(event: EventType) => void;
-  onChange: <EventType, ValueType>(event: EventType, value: ValueType) => void;
+  onChange: <EventType>(event: EventType, value: ValueType) => void;
   testFieldError: () => void;
   ref: FieldRef;
   ffHandler?: FormFullHandler<FormData>;

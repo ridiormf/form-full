@@ -46,7 +46,7 @@ export default class FormFullHandler<FormData> {
 
   setNewField = (
     name: Name<FormData>,
-    fieldParams: FieldHandlerParams<FormData>,
+    fieldParams: FieldHandlerParams<unknown, FormData>,
   ): void => {
     this.formFieldsHandler.setNewField(name, fieldParams);
   };
@@ -85,18 +85,21 @@ export default class FormFullHandler<FormData> {
   setFieldDefaultValue = (name: Name<FormData>, defaultValue: any): void => {
     this.formFieldsHandler.setFieldDefaultValue(name, defaultValue);
   };
-  setFieldMask = (name: Name<FormData>, mask?: MaskType<FormData>): void => {
+  setFieldMask = (
+    name: Name<FormData>,
+    mask?: MaskType<unknown, FormData>,
+  ): void => {
     this.formFieldsHandler.setFieldMask(name, mask);
   };
   setFieldMaskToSubmit = (
     name: Name<FormData>,
-    maskToSubmit?: MaskType<FormData>,
+    maskToSubmit?: MaskType<unknown, FormData>,
   ): void => {
     this.formFieldsHandler.setFieldMaskToSubmit(name, maskToSubmit);
   };
   setFieldValidations = (
     name: Name<FormData>,
-    validations?: ValidationType<FormData>[],
+    validations?: ValidationType<unknown, FormData>[],
   ): void => {
     this.formFieldsHandler.setFieldValidations(name, validations);
   };
